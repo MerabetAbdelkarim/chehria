@@ -1,0 +1,37 @@
+{
+    "flutter":  {
+                    "platforms":  {
+                                      "android":  {
+                                                      "default":  {
+                                                                      "projectId":  "masarif-db",
+                                                                      "appId":  "1:605004708167:android:c43291f535d58eadf7b462",
+                                                                      "fileOutput":  "android/app/google-services.json"
+                                                                  }
+                                                  },
+                                      "dart":  {
+                                                   "lib/firebase_options.dart":  {
+                                                                                     "projectId":  "masarif-db",
+                                                                                     "configurations":  {
+                                                                                                            "android":  "1:605004708167:android:c43291f535d58eadf7b462"
+                                                                                                        }
+                                                                                 }
+                                               }
+                                  }
+                },
+    "firestore":  {
+                      "rules":  "firestore.rules",
+                      "indexes":  "firestore.indexes.json"
+                  },
+    "emulators":  {
+                      "auth":  {
+                                   "port":  9099
+                               },
+                      "firestore":  {
+                                        "port":  8080
+                                    },
+                      "ui":  {
+                                 "enabled":  true,
+                                 "port":  4000
+                             }
+                  }
+}
