@@ -4,9 +4,10 @@ A personal-finance app for a **salaried person in Algeria**: set your monthly
 salary and pay day, then the app tells you — every day — how much you may still
 spend until the next salary.
 
-- Flutter (Dart 3, Material 3), Android + iOS
-- Firebase Authentication (email/password + Google Sign-In) and Cloud Firestore
-  (offline persistence enabled by default)
+- Flutter (Dart 3, Material 3). **Android is configured**; iOS needs
+  `flutterfire configure --platforms=ios` first (see §2.1)
+- Firebase Authentication (email/password + Google Sign-In), Cloud Firestore
+  (offline persistence enabled by default), Crashlytics and App Check
 - Riverpod, feature-first clean structure
 - Full **Arabic RTL** UI with **French** as a second language
 - Currency: Algerian Dinar, always stored as **integers in dinars**
@@ -31,13 +32,13 @@ dart pub global activate flutterfire_cli
 ### 2.1 Configure the project
 
 ```bash
-flutterfire configure
+flutterfire configure            # add --platforms=android,ios to add iOS
 ```
 
-This replaces `lib/firebase_options.dart` (a placeholder that currently throws
-a helpful error) and adds `google-services.json` / `GoogleService-Info.plist`.
-Until you run it, the app starts and shows an Arabic setup screen explaining
-exactly which commands to run.
+`lib/firebase_options.dart` currently holds the **Android** app of project
+`masarif-db` only; iOS and web throw a clear error until you run the command
+above for them (it also adds `GoogleService-Info.plist`). Without any Firebase
+configuration the app starts on a setup screen explaining what to run.
 
 ### 2.2 Enable the providers
 
@@ -54,12 +55,35 @@ In the Firebase console:
 firebase deploy --only firestore:rules,firestore:indexes
 ```
 
-`firestore.rules` gives each user read/write access to `users/{their-uid}/**`
-only. `firestore.indexes.json` contains the composite indexes used by the
-current and upcoming queries (transactions by category/date, subscriptions,
-debts, budgets).
+`firestore.rules` gives each user access to `users/{their-uid}` and its known
+sub-collections only, and **validates every write**: positive integer amounts,
+known enum values (`type`, `source`, `cycle`, …), pay day 1–31, `YYYY-MM`
+budget months, goals never below zero. Optional fields are only checked when
+present, so documents written by older versions stay editable.
+`firestore.indexes.json` contains the composite indexes used by the queries.
 
-### 2.4 Android
+The rules are tested on the emulator (Java 11+ and the Firebase CLI needed):
+
+```bash
+npm ci --prefix firestore-tests
+firebase emulators:exec --only firestore --project demo-masarifi "npm --prefix firestore-tests test"
+```
+
+### 2.4 Crashlytics, App Check and the API key
+
+- **Crashlytics** needs nothing more than the Gradle plugin already applied.
+  Collection is off in debug builds; every error the app recovers from is
+  still reported through `core/errors/error_reporter.dart`.
+- **App Check**: in the console, register the Android app with
+  **Play Integrity** (iOS: App Attest), run a debug build once and add the
+  debug token it prints, then switch **enforcement** on for Firestore and
+  Authentication.
+- **API key**: in Google Cloud Console → Credentials, restrict the Android key
+  to the package `dz.masarifi.masarifi` plus your SHA-1 fingerprints, and to
+  the Firebase APIs. The key is public by design: the restriction, App Check
+  and the rules are what protect the data.
+
+### 2.5 Android
 
 `android/app/build.gradle.kts` already sets:
 
@@ -74,7 +98,24 @@ Firebase project settings (Android app):
 cd android && ./gradlew signingReport
 ```
 
-### 2.5 iOS
+**Release signing.** Create an upload keystore and `android/key.properties`
+(both git-ignored):
+
+```bash
+keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+```
+
+```properties
+storeFile=/absolute/path/to/upload-keystore.jks
+storePassword=…
+keyAlias=upload
+keyPassword=…
+```
+
+Without that file a release build falls back to the debug key: fine for
+`flutter run --release`, refused by the Play Store.
+
+### 2.6 iOS
 
 Add `REVERSED_CLIENT_ID` from `GoogleService-Info.plist` to
 `ios/Runner/Info.plist` under `CFBundleURLTypes` (FlutterFire does this for you
@@ -91,8 +132,20 @@ flutter run
 
 ```bash
 flutter analyze   # no issues
-flutter test      # 114 tests
+flutter test      # 150 tests
 ```
+
+CI (`.github/workflows/ci.yml`) runs format, analyze, the Flutter tests and
+the Firestore rules tests on every push to `main` and every pull request.
+
+Repository tests (`test/data/`, in-memory Firestore via `fake_cloud_firestore`):
+
+- every money action keeps ledger, wallets and the linked document consistent,
+  and deleting the operation undoes all of it (debt payments, subscription due
+  dates, dawra contributions and rounds),
+- `addToBalance` debts move the wallet back on delete or amount change,
+- account and category deletion guards, system-category back-fill,
+- JSON backup content and "delete everything" (only that user's data).
 
 Covered by unit tests:
 
@@ -108,7 +161,10 @@ Covered by unit tests:
 - the monthly report builder (income/expense sums, transfers excluded,
   per-category grouping),
 - the dawra rotation (receiver order, paid/unpaid members, finished state),
-- seasonal planning (upcoming Algerian events, months left, monthly set-aside).
+- seasonal planning (upcoming Algerian events, months left, monthly set-aside,
+  Ramadan extrapolated beyond the table, the two Ramadans of 2030),
+- dashboard: goals set aside and dawra flows,
+- PDF generation in Arabic and French.
 
 ---
 
@@ -122,7 +178,7 @@ lib/
 ├── core/
 │   ├── constants/                # app constants + seed data (defaults)
 │   ├── domain/                   # pure logic: pay_period, debt_calculator
-│   ├── errors/                   # AppFailure + FirebaseAuth error mapping
+│   ├── errors/                   # AppFailure, auth error mapping, Crashlytics reporter
 │   ├── localization/             # S (ar/fr strings) + context extension
 │   ├── notifications/            # local-reminder plugin wrapper
 │   ├── providers/                # core + locale providers
@@ -131,7 +187,7 @@ lib/
 │   └── widgets/                  # async/empty/error views, dialogs, fields
 ├── features/
 │   ├── auth/        data · providers · presentation (sign in/up, auth gate)
-│   ├── settings/    models · data · providers · presentation (salary, payday)
+│   ├── settings/    models · data · providers · presentation (salary, payday, backup, delete account)
 │   ├── accounts/    models · data · providers · presentation (wallets, transfer)
 │   ├── categories/  models · data · providers · presentation
 │   ├── transactions/ models · data · providers · presentation (fast add)
@@ -160,7 +216,12 @@ test/
 ├── budget_status_test.dart
 ├── monthly_report_test.dart
 ├── dart_rounds_test.dart
-└── seasonal_events_test.dart
+├── seasonal_events_test.dart
+├── pdf_export_test.dart
+└── data/                         # repositories on fake Firestore
+assets/fonts/                     # Amiri (Arabic PDF) + OFL licence
+firestore-tests/                  # security-rules tests (emulator)
+.github/workflows/ci.yml
 firestore.rules
 firestore.indexes.json
 firebase.json
@@ -206,7 +267,12 @@ inside the **same batch** as the related transaction.
 `nameAr`, `nameFr`, `iconCode` (Material icon code point), `colorValue`,
 `kind` (`both` | `expense` | `income`), `isDefault`.
 Seeded on first sign-in: food, transport, coffee, shopping, bills, health,
-family, leisure, subscriptions, other + a `salary` income category.
+family, leisure, subscriptions, other + a `salary` income category, plus
+`cat_debts` and `cat_dawra` (back-filled for existing users at sign-in).
+The **system categories** `cat_other`, `cat_salary`, `cat_debts` and
+`cat_dawra` are written to automatically, so they can be renamed but never
+deleted; a category still used by operations, budgets or subscriptions cannot
+be deleted either.
 
 ### `transactions/{id}`
 
@@ -217,8 +283,19 @@ family, leisure, subscriptions, other + a `salary` income category.
 | `categoryId` | income/expense only |
 | `accountId` | target account; transfers also carry `fromAccountId`/`toAccountId` |
 | `date` | `Timestamp` |
-| `source` | `manual` \| `subscription` \| `debt` \| `salary` |
+| `source` | `manual` \| `subscription` \| `debt` \| `salary` \| `dawra` |
 | `note` | optional |
+| `linkedId` | debt / subscription / dawra that produced the operation |
+| `linkedPaymentId` | payment entry inside that debt or dawra |
+| `linkedRound` | dawra round |
+| `previousDueDate` | subscriptions: due date before this payment |
+
+**Linked operations.** An operation created by a debt payment, a bill payment
+or a dawra action carries `linkedId`. Its amount and type cannot be edited
+from the history (only note, date, category and account), and **deleting it
+undoes the side effect** in the same batch: the debt payment disappears, the
+bill's due date goes back (unless a later payment moved it again), the dawra
+contribution or round is undone.
 
 **Design decision:** the salary itself lives in settings; the *dashboard*
 formula is `salary + extra income − expenses − due subscriptions − due debts`,
@@ -229,13 +306,16 @@ dashboard records it into an account so wallet balances stay correct.
 ### `debts/{id}`
 
 `type` (`iOwe` | `owedToMe`), `person`, `phone`, `amount` (int), `date`,
-`dueDate?`, `note`, `payments[] {amount, date, note}`, `addToBalance`.
+`dueDate?`, `note`, `payments[] {id, amount, date, note}`, `addToBalance`,
+`balanceAccountId?`.
 Remaining = `amount − Σ payments`. A payment is written in **one batch**:
 payment entry + matching income/expense transaction + account balance.
 
 Both sides live on their own tab of the **الديون** screen. A debt unpaid for
 more than 60 days gets a "دين قديم" badge; `addToBalance` moves the borrowed
-or lent money on the wallet at creation time.
+or lent money on the wallet at creation time; that wallet is stored in
+`balanceAccountId`, so deleting the debt (or changing its amount) moves the
+money back. Payment operations use the `cat_debts` category.
 
 ### `subscriptions/{id}`
 
@@ -245,7 +325,8 @@ or lent money on the wallet at creation time.
 
 **"تم الدفع"** writes one batch: an expense operation tagged
 `source = subscription`, the account balance decremented, and
-`nextDueDate` advanced one cycle (clamped the same way the pay day is).
+`nextDueDate` advanced **at least one cycle**, even when the bill is paid
+early (clamped the same way the pay day is).
 Paused bills (`isActive = false`) never count towards the dashboard and never
 remind.
 
@@ -262,24 +343,29 @@ levels are pure logic (`budget_status.dart`): **warning ≥ 80 %**,
 `name`, `targetAmount`, `savedAmount`, `deadline?`, `kind`
 (`saving` | `seasonal`), `eventId?`, `entries[] {amount, date, note, withdraw}`.
 A deposit moves money from a wallet **into** the envelope; a withdrawal moves
-it back — both in one batch and **without** creating a ledger transaction
-(the money was already recorded when it first left the wallet).
+it back — both in one batch and **without** creating a ledger transaction.
+The dashboard subtracts the period's net deposits ("مُدّخر في الأهداف") from
+the remaining amount: that money is no longer available to spend.
 
 ### `dart/{id}` — rotating savings group (دَّارة)
 
 `name`, `contributionAmount`, `memberNames[]`, `meName`, `currentRound`
-(1-based), `startDate`, `payments[] {memberName, round, date}`.
+(1-based), `startDate`, `payments[] {id, memberName, round, date}`.
 Every member pays the same monthly contribution; the whole pot goes to one
 member each round (`receiverOf(round) = members[(round-1) % n]`). Recording a
 contribution writes an expense; receiving the pot writes an income
 (or an expense when I hand the cash to someone else) and advances
-`currentRound` — always in one batch.
+`currentRound` — always in one batch. These operations use
+`source = dawra` and the `cat_dawra` category: the dashboard keeps them out
+of income, expenses and the category chart (it is savings, not consumption)
+but adds their net to the remaining cash ("صافي الدَّارة").
 
 ### Seasonal planning
 
 Not a collection: a pure table of Algerian events
 (`features/seasonal/domain/algerian_events.dart`) — Ramadan starts (Maghrib
-announcements 2025–2030), Aïd el-Fitr, school year (1 September), summer
+announcements 2025–2030, then extrapolated with the mean lunar year, ±2 days;
+2030 has two), Aïd el-Fitr, school year (1 September), summer
 vacation, 1 November, New Year. Each event can spawn a `kind = seasonal` goal
 linked by `eventId`; the screen shows the progress and the **monthly set-aside**
 needed to reach the target before the event.
@@ -292,8 +378,16 @@ by category. The reports screen exports it two ways:
 
 - **Excel** (`excel` package): Arabic/French labels, full transactions table +
   per-category summary, shared via `share_plus`;
-- **PDF** (`pdf` + `printing` package): French labels only (built-in fonts
-  have no Arabic glyphs), same tables, shared as a file.
+- **PDF** (`pdf` + `printing` package): in the app language. Arabic is laid
+  out right-to-left with the embedded **Amiri** font (`assets/fonts/`, SIL
+  OFL); same tables, shared as a file.
+
+### Backup & account deletion
+
+Settings → **بياناتي**: export every document as one JSON file
+(`masarifi-backup-YYYY-MM-DD.json`), or delete the account permanently
+(re-authentication, then all Firestore data in batches, then the Firebase
+Auth user), as Google Play and the App Store require.
 
 ---
 
@@ -303,11 +397,13 @@ by category. The reports screen exports it two ways:
 - A new period starts exactly on the pay day.
 - Pay day 31 becomes 28/29 February, 30 April, etc.
 - **Days left** = whole days from today until the next pay day (the pay day
-  itself is not counted: the salary arrives then).
+  itself is not counted: the salary arrives then). "Today" rolls over at
+  midnight and whenever the app returns to the foreground on another day.
 - **Daily allowance** = `remaining ÷ days left`; if `remaining < 0` the card
   turns red and shows an explicit warning.
 - Unpaid subscriptions and debts **due before the next pay day** are subtracted
-  from the remaining amount.
+  from the remaining amount, and so is the money put into goals this period;
+  the dawra net is added.
 
 ---
 
@@ -352,4 +448,5 @@ declared in `AndroidManifest.xml` (`RECEIVE_BOOT_COMPLETED`,
 | **1** | auth, settings (salary + payday), accounts, transactions, dashboard | ✅ delivered |
 | **2** | subscriptions, both debt types with partial payments, local reminders | ✅ delivered |
 | **3** | budgets, goals, dart, seasonal planning, reports + Excel/PDF export | ✅ delivered |
-| **4** | onboarding polish, CSV backup/restore, widgets, multi-currency trip mode | ideas |
+| **4** | data integrity, validated rules, Crashlytics/App Check, Arabic PDF, JSON backup, account deletion, CI | ✅ delivered |
+| **5** | restore from backup, onboarding polish, widgets, multi-currency trip mode | ideas |

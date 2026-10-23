@@ -9,8 +9,17 @@ import '../../features/categories/models/category.dart';
 class DefaultData {
   DefaultData._();
 
+  /// The icon stored as [codePoint] on a category.
+  ///
+  /// Looked up among the constant [iconOptions] instead of building
+  /// `IconData(codePoint)` at runtime: release builds tree-shake the icon font
+  /// and refuse non-constant icons. Unknown codes fall back to a generic icon.
   static IconData iconOf(int codePoint) =>
-      IconData(codePoint, fontFamily: 'MaterialIcons');
+      _iconsByCode[codePoint] ?? Icons.category;
+
+  static final Map<int, IconData> _iconsByCode = {
+    for (final icon in iconOptions) icon.codePoint: icon,
+  };
 
   static const List<Color> colorOptions = [
     Color(0xFF00873D),
