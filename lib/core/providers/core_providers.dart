@@ -11,6 +11,7 @@ import '../../features/dart/data/dart_repository.dart';
 import '../../features/debts/data/debt_repository.dart';
 import '../../features/goals/data/goal_repository.dart';
 import '../../features/settings/data/settings_repository.dart';
+import '../../features/settings/data/user_data_repository.dart';
 import '../../features/subscriptions/data/subscription_repository.dart';
 import '../../features/transactions/data/transaction_repository.dart';
 
@@ -48,6 +49,10 @@ final bootstrapRepositoryProvider = Provider<BootstrapRepository>(
 
 final settingsRepositoryProvider = Provider<SettingsRepository>(
   (ref) => SettingsRepository(ref.watch(firestoreProvider)),
+);
+
+final userDataRepositoryProvider = Provider<UserDataRepository>(
+  (ref) => UserDataRepository(ref.watch(firestoreProvider)),
 );
 
 final accountRepositoryProvider = Provider<AccountRepository>(

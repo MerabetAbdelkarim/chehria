@@ -43,6 +43,51 @@ class AuthRepository {
     return _auth.signInWithCredential(credential);
   }
 
+  /// Whether the signed-in user has an email/password credential (otherwise
+  /// they signed in with Google only).
+  bool get usesPassword =>
+      _auth.currentUser?.providerData.any((p) => p.providerId == 'password') ??
+      false;
+
+  /// Confirms the user's identity again: Firebase demands a recent sign-in
+  /// before sensitive operations such as deleting the account.
+  /// [password] is required for email/password users; Google users go
+  /// through the Google sign-in sheet.
+  Future<void> reauthenticate({String? password}) async {
+    final user = _auth.currentUser;
+    if (user == null) throw FirebaseAuthException(code: 'user-not-found');
+
+    final AuthCredential credential;
+    if (usesPassword) {
+      credential = EmailAuthProvider.credential(
+        email: user.email ?? '',
+        password: password ?? '',
+      );
+    } else {
+      final account = await GoogleSignIn().signIn();
+      if (account == null) {
+        throw FirebaseAuthException(code: 'sign-in-canceled');
+      }
+      final auth = await account.authentication;
+      credential = GoogleAuthProvider.credential(
+        idToken: auth.idToken,
+        accessToken: auth.accessToken,
+      );
+    }
+    await user.reauthenticateWithCredential(credential);
+  }
+
+  /// Deletes the Firebase Auth user (call after [reauthenticate] and after
+  /// the Firestore data is gone: rules need the user to still exist).
+  Future<void> deleteUser() async {
+    await _auth.currentUser?.delete();
+    try {
+      await GoogleSignIn().signOut();
+    } catch (_) {
+      // Google sign-in may never have been used.
+    }
+  }
+
   Future<void> sendPasswordReset(String email) =>
       _auth.sendPasswordResetEmail(email: email.trim());
 

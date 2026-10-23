@@ -54,7 +54,7 @@ class ReportsScreen extends ConsumerWidget {
           transactions: transactions,
           categories: categories,
           accountNames: accountNames,
-          isAr: s.isAr,
+          s: s,
         );
       } else {
         await ExportService.sharePdf(
@@ -62,6 +62,7 @@ class ReportsScreen extends ConsumerWidget {
           transactions: transactions,
           categories: categories,
           accountNames: accountNames,
+          s: s,
         );
       }
     } catch (e, st) {

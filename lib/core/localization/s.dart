@@ -603,6 +603,7 @@ class S {
   String get reportEmpty =>
       _t('لا توجد بيانات لهذا الشهر', 'Aucune donnée ce mois');
   String get month => _t('الشهر', 'Mois');
+  String get count => _t('العدد', 'Nombre');
 
   // ------------------------------------------------- automatic ledger notes
   String debtPaymentReceivedNote(String person) =>
@@ -617,6 +618,31 @@ class S {
     'دَّارة $group — استلام $receiver (جولة $round)',
     'Dawra $group — remise à $receiver (tour $round)',
   );
+
+  // ------------------------------------------------------------- my data
+  String get myData => _t('بياناتي', 'Mes données');
+  String get exportBackup =>
+      _t('تصدير نسخة احتياطية', 'Exporter une sauvegarde');
+  String get exportBackupHint => _t(
+    'ملف JSON يحتوي كل حساباتك وعملياتك وديونك واشتراكاتك وأهدافك',
+    'Fichier JSON avec tous vos comptes, opérations, dettes, abonnements et objectifs',
+  );
+  String get deleteUserAccount =>
+      _t('حذف حسابي نهائياً', 'Supprimer mon compte');
+  String get deleteUserAccountHint => _t(
+    'يحذف كل بياناتك من الخادم ولا يمكن التراجع عنه',
+    'Efface toutes vos données du serveur, définitivement',
+  );
+  String get deleteUserAccountConfirm => _t(
+    'سيتم حذف حسابك وكل بياناتك (العمليات، الحسابات، الديون، الاشتراكات، الأهداف، الدَّارات) نهائياً. ننصحك بتصدير نسخة احتياطية أولاً. متابعة؟',
+    'Votre compte et toutes vos données (opérations, comptes, dettes, abonnements, objectifs, dawras) seront supprimés définitivement. Exportez d’abord une sauvegarde. Continuer ?',
+  );
+  String get confirmWithPassword =>
+      _t('أدخل كلمة المرور للتأكيد', 'Saisissez votre mot de passe');
+  String get deletingAccount =>
+      _t('جارٍ حذف الحساب…', 'Suppression du compte…');
+  String get accountDeleted =>
+      _t('تم حذف حسابك', 'Votre compte a été supprimé');
 
   // ---------------------------------------------------------------- misc
   String get inPlus => _t('خلال', 'sur');

@@ -15,6 +15,7 @@ import '../../reports/presentation/reports_screen.dart';
 import '../../seasonal/presentation/seasonal_screen.dart';
 import '../../subscriptions/presentation/subscriptions_screen.dart';
 import '../providers/settings_providers.dart';
+import 'my_data_section.dart';
 import 'pay_period_setup_screen.dart';
 
 /// Profile, pay period, display options and app preferences.
@@ -322,6 +323,10 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(height: 16),
+
+          // --------------------------------------------------- my data
+          const MyDataSection(),
           const SizedBox(height: 16),
 
           // ----------------------------------------------------- about
