@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:masarifi/features/goals/models/goal.dart';
 import 'package:masarifi/features/dashboard/domain/dashboard_calculator.dart';
 import 'package:masarifi/features/debts/models/debt.dart';
 import 'package:masarifi/features/settings/models/user_settings.dart';
@@ -237,6 +238,63 @@ void main() {
       expect(data.expenses, 0);
       expect(data.period.start, DateTime(2026, 10, 1));
       expect(data.previousPeriod.start, DateTime(2026, 9, 1));
+    });
+  });
+
+  group('goals and dawra', () {
+    test('money put into a goal this period is no longer spendable', () {
+      final data = buildDashboard(
+        now: now,
+        settings: settings,
+        periodTransactions: const [],
+        previousTransactions: const [],
+        debts: const [],
+        goals: [
+          Goal(
+            id: 'g1',
+            name: 'Hajj',
+            targetAmount: 100000,
+            savedAmount: 12000,
+            entries: [
+              GoalEntry(amount: 10000, date: DateTime(2026, 10, 3)),
+              GoalEntry(amount: 3000, date: DateTime(2026, 10, 8)),
+              GoalEntry(
+                amount: 1000,
+                date: DateTime(2026, 10, 9),
+                withdraw: true,
+              ),
+              // Previous period: already accounted for back then.
+              GoalEntry(amount: 5000, date: DateTime(2026, 9, 20)),
+            ],
+          ),
+        ],
+      );
+
+      expect(data.goalsSetAside, 12000);
+      expect(data.remaining, 38000);
+    });
+
+    test('dawra flows stay out of income and expenses but count in cash', () {
+      final data = buildDashboard(
+        now: now,
+        settings: settings,
+        periodTransactions: [
+          expense(amount: 5000, category: 'cat_dawra', source: TxnSource.dawra),
+          income(amount: 15000, category: 'cat_dawra', source: TxnSource.dawra),
+          expense(amount: 2000),
+        ],
+        previousTransactions: [
+          expense(amount: 5000, category: 'cat_dawra', source: TxnSource.dawra),
+        ],
+        debts: const [],
+      );
+
+      expect(data.expenses, 2000);
+      expect(data.extraIncome, 0);
+      expect(data.expensesByCategory.containsKey('cat_dawra'), isFalse);
+      expect(data.dawraNet, 10000);
+      expect(data.remaining, 50000 - 2000 + 10000);
+      expect(data.previousExpenses, 0);
     });
   });
 }
