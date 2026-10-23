@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/localization/s_context.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
@@ -107,9 +108,10 @@ class _DebtFormSheetState extends ConsumerState<DebtFormSheet> {
           note: _note.text.trim(),
           payments: widget.debt!.payments,
           addToBalance: widget.debt!.addToBalance,
+          balanceAccountId: widget.debt!.balanceAccountId,
           createdAt: widget.debt!.createdAt,
         );
-        await repo.update(uid, updated);
+        await repo.update(uid, widget.debt!, updated);
       } else {
         final debt = Debt(
           id: '',
@@ -127,7 +129,8 @@ class _DebtFormSheetState extends ConsumerState<DebtFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.debtSaved);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'debt_form_sheet');
       if (mounted) setState(() => _error = s.errorGeneric);
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -147,11 +150,12 @@ class _DebtFormSheetState extends ConsumerState<DebtFormSheet> {
     if (!ok || !mounted) return;
 
     try {
-      await ref.read(debtRepositoryProvider).delete(uid, widget.debt!.id);
+      await ref.read(debtRepositoryProvider).delete(uid, widget.debt!);
       if (!mounted) return;
       showAppSnack(context, s.debtDeleted);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'debt_form_sheet');
       if (mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

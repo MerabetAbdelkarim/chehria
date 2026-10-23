@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/validators.dart';
@@ -133,7 +134,8 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.goalSaved);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'goal_form_sheet');
       if (mounted) setState(() => _error = s.errorGeneric);
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -157,7 +159,8 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.goalDeleted);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'goal_form_sheet');
       if (mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

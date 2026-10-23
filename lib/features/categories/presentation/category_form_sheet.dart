@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/default_data.dart';
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/localization/s.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/confirm_dialog.dart';
+import '../data/category_repository.dart';
 import '../models/category.dart';
+import 'category_actions.dart';
 
 /// Create / edit / delete a category (name, icon, color, kind).
 class CategoryFormSheet extends ConsumerStatefulWidget {
@@ -111,7 +114,8 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.savedDone);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'category_form_sheet');
       if (mounted) setState(() => _error = s.errorGeneric);
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -119,26 +123,10 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
   }
 
   Future<void> _delete() async {
-    final s = ref.read(sProvider);
-    final uid = ref.read(uidProvider);
     final category = widget.category;
-    if (uid == null || category == null) return;
-
-    final ok = await showConfirmDialog(
-      context,
-      title: s.deleteConfirmTitle,
-      message: s.deleteCategoryConfirm,
-    );
-    if (!ok || !mounted) return;
-
-    try {
-      await ref.read(categoryRepositoryProvider).delete(uid, category.id);
-      if (!mounted) return;
-      showAppSnack(context, s.deletedDone);
-      Navigator.of(context).pop();
-    } catch (_) {
-      if (mounted) showAppSnack(context, s.errorGeneric, error: true);
-    }
+    if (category == null) return;
+    final deleted = await confirmAndDeleteCategory(context, ref, category);
+    if (deleted && mounted) Navigator.of(context).pop();
   }
 
   @override
@@ -294,7 +282,8 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
                     )
                   : Text(s.save),
             ),
-            if (_isEdit) ...[
+            if (_isEdit &&
+                !CategoryRepository.isSystem(widget.category!.id)) ...[
               const SizedBox(height: 6),
               TextButton.icon(
                 onPressed: _saving ? null : _delete,

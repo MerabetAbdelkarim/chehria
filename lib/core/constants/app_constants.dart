@@ -34,4 +34,21 @@ class AppConstants {
   static const String colBudgets = 'budgets';
   static const String colGoals = 'goals';
   static const String colDart = 'dart';
+
+  /// Seeded categories the app writes to by itself. They can be renamed but
+  /// never deleted, otherwise automatic operations would point nowhere.
+  static const String catOther = 'cat_other';
+  static const String catSalary = 'cat_salary';
+  static const String catDebts = 'cat_debts';
+  static const String catDawra = 'cat_dawra';
+
+  static const Set<String> systemCategoryIds = {
+    catOther,
+    catSalary,
+    catDebts,
+    catDawra,
+  };
+
+  /// Page size of the transactions history.
+  static const int transactionsPageSize = 100;
 }

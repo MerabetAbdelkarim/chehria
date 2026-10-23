@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/formatters.dart';
@@ -37,9 +38,10 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
     if (!ok) return;
 
     try {
-      await ref.read(debtRepositoryProvider).delete(uid, debt.id);
+      await ref.read(debtRepositoryProvider).delete(uid, debt);
       if (mounted) showAppSnack(context, s.debtDeleted);
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'debts_screen');
       if (mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/localization/s.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
@@ -42,7 +43,8 @@ class AccountsScreen extends ConsumerWidget {
     try {
       await repo.delete(uid, account.id);
       if (context.mounted) showAppSnack(context, s.deletedDone);
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'accounts_screen');
       if (context.mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

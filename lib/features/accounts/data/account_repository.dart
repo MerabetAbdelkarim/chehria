@@ -34,7 +34,10 @@ class AccountRepository {
 
   /// Whether the account already carries operations (blocks deletion).
   Future<bool> isInUse(String uid, String accountId) async {
-    final col = _col(uid);
+    final col = _db
+        .collection('users')
+        .doc(uid)
+        .collection(AppConstants.colTransactions);
     Future<bool> has(String field) async {
       final snap = await col.where(field, isEqualTo: accountId).limit(1).get();
       return snap.docs.isNotEmpty;

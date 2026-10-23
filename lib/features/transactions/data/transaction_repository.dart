@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../dart/models/dart_group.dart';
+import '../../debts/models/debt.dart';
+import '../../subscriptions/domain/subscription_calculator.dart';
+import '../../subscriptions/models/subscription.dart';
 import '../models/money_transaction.dart';
 
 /// Income/expense/transfer records.
@@ -22,6 +26,12 @@ class TransactionRepository {
       .collection(AppConstants.colAccounts)
       .doc(id);
 
+  DocumentReference<Map<String, dynamic>> _userDoc(
+    String uid,
+    String collection,
+    String id,
+  ) => _db.collection('users').doc(uid).collection(collection).doc(id);
+
   /// Operations inside `[start, end)` ordered by date (newest first).
   Stream<List<MoneyTransaction>> watchRange(
     String uid,
@@ -39,13 +49,16 @@ class TransactionRepository {
         .map((s) => s.docs.map(MoneyTransaction.fromDoc).toList());
   }
 
-  /// The most recent operations, for the transactions screen.
-  Stream<List<MoneyTransaction>> watchRecent(String uid, {int limit = 300}) =>
-      _col(uid)
-          .orderBy('date', descending: true)
-          .limit(limit)
-          .snapshots()
-          .map((s) => s.docs.map(MoneyTransaction.fromDoc).toList());
+  /// The most recent operations, for the transactions screen. The screen
+  /// grows [limit] page by page as the user scrolls.
+  Stream<List<MoneyTransaction>> watchRecent(
+    String uid, {
+    int limit = AppConstants.transactionsPageSize,
+  }) => _col(uid)
+      .orderBy('date', descending: true)
+      .limit(limit)
+      .snapshots()
+      .map((s) => s.docs.map(MoneyTransaction.fromDoc).toList());
 
   /// Per-account balance changes implied by [t].
   static Map<String, int> balanceDeltas(MoneyTransaction t) {
@@ -90,11 +103,17 @@ class TransactionRepository {
   }
 
   /// Updates an existing operation, adjusting every affected balance.
-  Future<void> update(String uid, MoneyTransaction txn) async {
-    final ref = _col(uid).doc(txn.id);
+  Future<void> update(String uid, MoneyTransaction edited) async {
+    final ref = _col(uid).doc(edited.id);
     final snapshot = await ref.get();
     if (!snapshot.exists) return;
     final old = MoneyTransaction.fromDoc(snapshot);
+
+    // The amount and direction of a linked operation belong to its debt,
+    // subscription or dawra: only the free fields may change here.
+    final txn = old.isLinked
+        ? edited.copyWith(type: old.type, amount: old.amount)
+        : edited;
 
     final combined = <String, int>{};
     void merge(String key, int value) =>
@@ -108,11 +127,81 @@ class TransactionRepository {
     await batch.commit();
   }
 
-  /// Deletes the operation and gives the money back to the accounts.
+  /// Deletes the operation, gives the money back to the accounts and undoes
+  /// its effect on the linked debt / subscription / dawra — one batch.
   Future<void> delete(String uid, MoneyTransaction txn) async {
     final batch = _db.batch();
     batch.delete(_col(uid).doc(txn.id));
     _applyDeltas(batch, uid, balanceDeltas(txn), invert: true);
+    await _undoLink(batch, uid, txn);
     await batch.commit();
+  }
+
+  Future<void> _undoLink(
+    WriteBatch batch,
+    String uid,
+    MoneyTransaction txn,
+  ) async {
+    final linkedId = txn.linkedId;
+    if (linkedId == null) return;
+
+    switch (txn.source) {
+      case TxnSource.debt:
+        final ref = _userDoc(uid, AppConstants.colDebts, linkedId);
+        final snap = await ref.get();
+        if (!snap.exists) return; // debt already deleted: nothing to undo
+        final debt = Debt.fromDoc(snap);
+        final kept = debt.payments
+            .where((p) => p.id.isEmpty || p.id != txn.linkedPaymentId)
+            .toList();
+        if (kept.length == debt.payments.length) return;
+        batch.update(ref, {
+          'payments': kept.map((p) => p.toMap()).toList(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+      case TxnSource.subscription:
+        final previous = txn.previousDueDate;
+        if (previous == null) return;
+        final ref = _userDoc(uid, AppConstants.colSubscriptions, linkedId);
+        final snap = await ref.get();
+        if (!snap.exists) return;
+        final sub = Subscription.fromDoc(snap);
+        // Only rewind when no later payment moved the bill again.
+        final producedByThis = dueAfterPayment(previous, sub.cycle, txn.date);
+        if (sub.nextDueDate != producedByThis) return;
+        batch.update(ref, {
+          'nextDueDate': Timestamp.fromDate(previous),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+      case TxnSource.dawra:
+        final ref = _userDoc(uid, AppConstants.colDart, linkedId);
+        final snap = await ref.get();
+        if (!snap.exists) return;
+        final group = DartGroup.fromDoc(snap);
+        if (txn.linkedPaymentId != null) {
+          // A contribution: drop its payment entry.
+          final kept = group.payments
+              .where((p) => p.id.isEmpty || p.id != txn.linkedPaymentId)
+              .toList();
+          if (kept.length == group.payments.length) return;
+          batch.update(ref, {
+            'payments': kept.map((p) => p.toMap()).toList(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+        } else if (txn.linkedRound != null &&
+            group.currentRound == txn.linkedRound! + 1) {
+          // The pot of the latest round: step the rotation back.
+          batch.update(ref, {
+            'currentRound': txn.linkedRound,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+      case TxnSource.manual:
+      case TxnSource.salary:
+        return;
+    }
   }
 }

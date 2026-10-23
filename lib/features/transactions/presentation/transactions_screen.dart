@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/default_data.dart';
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/formatters.dart';
@@ -36,14 +37,17 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     final confirmed = await showConfirmDialog(
       context,
       title: s.deleteConfirmTitle,
-      message: s.deleteTransactionConfirm,
+      message: txn.isLinked
+          ? s.deleteLinkedTransactionConfirm
+          : s.deleteTransactionConfirm,
     );
     if (!confirmed) return;
 
     try {
       await ref.read(transactionRepositoryProvider).delete(uid, txn);
       if (mounted) showAppSnack(context, s.transactionDeleted);
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'transactions_screen');
       if (mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

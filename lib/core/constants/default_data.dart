@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'app_constants.dart';
+
 import '../../features/accounts/models/account.dart';
 import '../../features/categories/models/category.dart';
 
@@ -56,6 +58,8 @@ class DefaultData {
     Icons.music_note,
     Icons.sports_soccer,
     Icons.workspace_premium,
+    Icons.handshake,
+    Icons.groups,
   ];
 
   static List<Category> get categories => [
@@ -141,7 +145,7 @@ class DefaultData {
       isDefault: true,
     ),
     Category(
-      id: 'cat_other',
+      id: AppConstants.catOther,
       nameAr: 'أخرى',
       nameFr: 'Autre',
       iconCode: Icons.category.codePoint,
@@ -150,12 +154,30 @@ class DefaultData {
       isDefault: true,
     ),
     Category(
-      id: 'cat_salary',
+      id: AppConstants.catSalary,
       nameAr: 'الراتب',
       nameFr: 'Salaire',
       iconCode: Icons.payments.codePoint,
       colorValue: 0xFF43A047,
       kind: CategoryKind.income,
+      isDefault: true,
+    ),
+    Category(
+      id: AppConstants.catDebts,
+      nameAr: 'ديون',
+      nameFr: 'Dettes',
+      iconCode: Icons.handshake.codePoint,
+      colorValue: 0xFF00838F,
+      kind: CategoryKind.both,
+      isDefault: true,
+    ),
+    Category(
+      id: AppConstants.catDawra,
+      nameAr: 'الدَّارة',
+      nameFr: 'Dawra',
+      iconCode: Icons.groups.codePoint,
+      colorValue: 0xFF3949AB,
+      kind: CategoryKind.both,
       isDefault: true,
     ),
   ];

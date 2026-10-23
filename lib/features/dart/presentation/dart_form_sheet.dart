@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/validators.dart';
@@ -120,7 +121,8 @@ class _DartFormSheetState extends ConsumerState<DartFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.dartSaved);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'dart_form_sheet');
       if (mounted) setState(() => _error = s.errorGeneric);
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -144,7 +146,8 @@ class _DartFormSheetState extends ConsumerState<DartFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.dartDeleted);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'dart_form_sheet');
       if (mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

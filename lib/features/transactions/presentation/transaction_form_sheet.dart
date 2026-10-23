@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/validators.dart';
@@ -95,7 +96,8 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.savedDone);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'transaction_form_sheet');
       if (mounted) setState(() => _error = s.errorGeneric);
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -110,7 +112,9 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
     final ok = await showConfirmDialog(
       context,
       title: s.deleteConfirmTitle,
-      message: s.deleteTransactionConfirm,
+      message: widget.txn.isLinked
+          ? s.deleteLinkedTransactionConfirm
+          : s.deleteTransactionConfirm,
     );
     if (!ok || !mounted) return;
 
@@ -119,7 +123,8 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.transactionDeleted);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'transaction_form_sheet');
       if (mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }
@@ -130,6 +135,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
     final theme = Theme.of(context);
     final categories = ref.watch(categoriesOrNullProvider);
     final accounts = ref.watch(accountsOrNullProvider);
+    final locked = widget.txn.isLinked;
 
     final usableCategories = categories.where((c) {
       if (_type == TxnType.income) return c.kind != CategoryKind.expense;
@@ -164,10 +170,12 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                   ),
                 ],
                 selected: {_type},
-                onSelectionChanged: (v) => setState(() {
-                  _type = v.first;
-                  _categoryId = null;
-                }),
+                onSelectionChanged: locked
+                    ? null
+                    : (v) => setState(() {
+                        _type = v.first;
+                        _categoryId = null;
+                      }),
               ),
             const SizedBox(height: 16),
             AppTextField(
@@ -175,9 +183,19 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
               label: s.amount,
               keyboardType: TextInputType.number,
               prefixIcon: Icons.payments_rounded,
+              enabled: !locked,
               validator: (v) =>
                   validateAmount(s, v?.replaceAll(RegExp(r'[^\d]'), '') ?? ''),
             ),
+            if (locked) ...[
+              const SizedBox(height: 6),
+              Text(
+                s.linkedTransactionHint,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
             const SizedBox(height: 14),
             DropdownButtonFormField<String>(
               initialValue: _categoryId,

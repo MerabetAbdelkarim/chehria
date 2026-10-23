@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/default_data.dart';
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/localization/s.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
@@ -112,7 +113,8 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.savedDone);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'account_form_sheet');
       if (mounted) setState(() => _error = s.errorGeneric);
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -146,7 +148,8 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.deletedDone);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'account_form_sheet');
       if (mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

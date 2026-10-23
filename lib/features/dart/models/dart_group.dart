@@ -6,19 +6,24 @@ class DartPayment {
     required this.memberName,
     required this.round,
     required this.date,
+    this.id = '',
   });
 
+  /// Matches `linkedPaymentId` on the ledger operation (empty on old data).
+  final String id;
   final String memberName;
   final int round;
   final DateTime date;
 
   factory DartPayment.fromMap(Map<String, dynamic> m) => DartPayment(
+    id: m['id'] as String? ?? '',
     memberName: m['memberName'] as String? ?? '',
     round: (m['round'] as num?)?.toInt() ?? 1,
     date: (m['date'] as Timestamp?)?.toDate() ?? DateTime.now(),
   );
 
   Map<String, dynamic> toMap() => {
+    if (id.isNotEmpty) 'id': id,
     'memberName': memberName,
     'round': round,
     'date': Timestamp.fromDate(date),

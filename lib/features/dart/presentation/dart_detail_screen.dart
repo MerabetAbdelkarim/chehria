@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/formatters.dart';
@@ -47,9 +48,15 @@ class DartDetailScreen extends ConsumerWidget {
             group: group,
             memberName: group.meName,
             accountId: accountId,
+            note: s.dawraContributionNote(
+              group.name,
+              group.meName,
+              group.currentRound,
+            ),
           );
       if (context.mounted) showAppSnack(context, s.contributionPaid);
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'dart_detail_screen');
       if (context.mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }
@@ -93,9 +100,11 @@ class DartDetailScreen extends ConsumerWidget {
             accountId: accountId,
             receiverName: receiver,
             toMe: toMe,
+            note: s.dawraPotNote(group.name, receiver, group.currentRound),
           );
       if (context.mounted) showAppSnack(context, s.roundComplete);
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'dart_detail_screen');
       if (context.mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/localization/s.dart';
 import '../../../core/notifications/notifications_service.dart';
 import '../../../core/providers/core_providers.dart';
@@ -76,7 +77,8 @@ Future<void> syncReminders(Ref ref) async {
         debts: inputs.debts,
       ),
     );
-  } catch (_) {
+  } catch (e, st) {
+    reportError(e, st, reason: 'reminders_provider');
     // Reminders are a convenience: never break the app over them.
   }
 }

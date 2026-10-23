@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/default_data.dart';
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/formatters.dart';
@@ -89,7 +90,8 @@ class _FastAddTransactionScreenState
       if (!mounted) return;
       showAppSnack(context, s.transactionSaved);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'fast_add_transaction_screen');
       if (mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

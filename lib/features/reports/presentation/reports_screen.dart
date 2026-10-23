@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/default_data.dart';
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/amount_text.dart';
@@ -63,7 +64,8 @@ class ReportsScreen extends ConsumerWidget {
           accountNames: accountNames,
         );
       }
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'reports_screen');
       if (context.mounted) showAppSnack(context, s.exportFailed, error: true);
     }
   }

@@ -28,6 +28,28 @@ class CategoryRepository {
   Future<void> update(String uid, Category category) =>
       _col(uid).doc(category.id).set(category.toMap(), SetOptions(merge: true));
 
+  /// Seeded categories the app writes to by itself (never deletable).
+  static bool isSystem(String categoryId) =>
+      AppConstants.systemCategoryIds.contains(categoryId);
+
+  /// Whether operations, budgets or subscriptions still point at the
+  /// category (blocks deletion so nothing becomes "uncategorized" silently).
+  Future<bool> isInUse(String uid, String categoryId) async {
+    final user = _db.collection('users').doc(uid);
+    Future<bool> has(String collection) async {
+      final snap = await user
+          .collection(collection)
+          .where('categoryId', isEqualTo: categoryId)
+          .limit(1)
+          .get();
+      return snap.docs.isNotEmpty;
+    }
+
+    return await has(AppConstants.colTransactions) ||
+        await has(AppConstants.colBudgets) ||
+        await has(AppConstants.colSubscriptions);
+  }
+
   Future<void> delete(String uid, String categoryId) =>
       _col(uid).doc(categoryId).delete();
 }

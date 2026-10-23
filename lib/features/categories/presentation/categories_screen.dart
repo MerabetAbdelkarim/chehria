@@ -3,41 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/default_data.dart';
 import '../../../core/localization/s.dart';
-import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/widgets/async_view.dart';
-import '../../../core/widgets/confirm_dialog.dart';
 import '../models/category.dart';
 import '../providers/categories_providers.dart';
+import 'category_actions.dart';
 import 'category_form_sheet.dart';
 
 /// Manage the categories used by transactions and budgets.
 class CategoriesScreen extends ConsumerWidget {
   const CategoriesScreen({super.key});
-
-  Future<void> _delete(
-    BuildContext context,
-    WidgetRef ref,
-    Category category,
-  ) async {
-    final s = ref.read(sProvider);
-    final uid = ref.read(uidProvider);
-    if (uid == null) return;
-
-    final ok = await showConfirmDialog(
-      context,
-      title: s.deleteConfirmTitle,
-      message: s.deleteCategoryConfirm,
-    );
-    if (!ok || !context.mounted) return;
-
-    try {
-      await ref.read(categoryRepositoryProvider).delete(uid, category.id);
-      if (context.mounted) showAppSnack(context, s.deletedDone);
-    } catch (_) {
-      if (context.mounted) showAppSnack(context, s.errorGeneric, error: true);
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,7 +51,7 @@ class CategoriesScreen extends ConsumerWidget {
                   key: ValueKey(category.id),
                   direction: DismissDirection.endToStart,
                   confirmDismiss: (_) async {
-                    await _delete(context, ref, category);
+                    await confirmAndDeleteCategory(context, ref, category);
                     return false;
                   },
                   background: Container(

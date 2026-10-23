@@ -18,19 +18,29 @@ enum DebtType {
 
 /// One partial payment recorded against a debt.
 class DebtPayment {
-  const DebtPayment({required this.amount, required this.date, this.note = ''});
+  const DebtPayment({
+    required this.amount,
+    required this.date,
+    this.note = '',
+    this.id = '',
+  });
 
+  /// Matches `linkedPaymentId` on the ledger operation. Empty for payments
+  /// recorded before ids existed.
+  final String id;
   final int amount;
   final DateTime date;
   final String note;
 
   factory DebtPayment.fromMap(Map<String, dynamic> m) => DebtPayment(
+    id: m['id'] as String? ?? '',
     amount: (m['amount'] as num?)?.toInt() ?? 0,
     date: (m['date'] as Timestamp?)?.toDate() ?? DateTime.now(),
     note: m['note'] as String? ?? '',
   );
 
   Map<String, dynamic> toMap() => {
+    if (id.isNotEmpty) 'id': id,
     'amount': amount,
     'date': Timestamp.fromDate(date),
     'note': note,
@@ -50,6 +60,7 @@ class Debt {
     this.note = '',
     this.payments = const [],
     this.addToBalance = false,
+    this.balanceAccountId,
     this.createdAt,
   });
 
@@ -67,6 +78,9 @@ class Debt {
 
   /// Whether the borrowed/lent amount moved the account balance on creation.
   final bool addToBalance;
+
+  /// Account moved by [addToBalance], so deleting the debt can move it back.
+  final String? balanceAccountId;
   final DateTime? createdAt;
 
   int get paidTotal => debtPaidTotal(payments.map((p) => p.amount));
@@ -89,6 +103,7 @@ class Debt {
     note: note,
     payments: payments ?? this.payments,
     addToBalance: addToBalance,
+    balanceAccountId: balanceAccountId,
     createdAt: createdAt,
   );
 
@@ -107,6 +122,7 @@ class Debt {
           .map((e) => DebtPayment.fromMap(Map<String, dynamic>.from(e as Map)))
           .toList(),
       addToBalance: d['addToBalance'] as bool? ?? false,
+      balanceAccountId: d['balanceAccountId'] as String?,
       createdAt: (d['createdAt'] as Timestamp?)?.toDate(),
     );
   }
@@ -121,6 +137,7 @@ class Debt {
     'note': note,
     'payments': payments.map((p) => p.toMap()).toList(),
     'addToBalance': addToBalance,
+    if (balanceAccountId != null) 'balanceAccountId': balanceAccountId,
     'createdAt': createdAt != null
         ? Timestamp.fromDate(createdAt!)
         : FieldValue.serverTimestamp(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/default_data.dart';
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/formatters.dart';
@@ -50,7 +51,8 @@ class BudgetsScreen extends ConsumerWidget {
     try {
       await ref.read(budgetRepositoryProvider).delete(uid, row.budget.id);
       if (context.mounted) showAppSnack(context, s.budgetDeleted);
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'budgets_screen');
       if (context.mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

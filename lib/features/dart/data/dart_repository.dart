@@ -44,11 +44,13 @@ class DartRepository {
       _col(uid).doc(groupId).delete();
 
   /// Records a member's contribution for [round]: expense + payments entry.
+  /// [note] is the localized label written on the ledger operation.
   Future<void> payContribution({
     required String uid,
     required DartGroup group,
     required String memberName,
     required String accountId,
+    required String note,
     DateTime? date,
   }) async {
     final now = date ?? DateTime.now();
@@ -59,10 +61,15 @@ class DartRepository {
       amount: group.contributionAmount,
       date: now,
       accountId: accountId,
-      categoryId: 'cat_other',
-      note: 'دَّارة ${group.name} — $memberName (جولة ${group.currentRound})',
+      categoryId: AppConstants.catDawra,
+      note: note,
+      source: TxnSource.dawra,
+      linkedId: group.id,
+      linkedPaymentId: txnRef.id,
+      linkedRound: group.currentRound,
     );
     final payment = DartPayment(
+      id: txnRef.id,
       memberName: memberName,
       round: group.currentRound,
       date: now,
@@ -89,6 +96,7 @@ class DartRepository {
     required String accountId,
     required String receiverName,
     required bool toMe,
+    required String note,
     DateTime? date,
   }) async {
     final now = date ?? DateTime.now();
@@ -99,9 +107,11 @@ class DartRepository {
       amount: group.pot,
       date: now,
       accountId: accountId,
-      categoryId: 'cat_other',
-      note:
-          'دَّارة ${group.name} — استلام $receiverName (جولة ${group.currentRound})',
+      categoryId: AppConstants.catDawra,
+      note: note,
+      source: TxnSource.dawra,
+      linkedId: group.id,
+      linkedRound: group.currentRound,
     );
 
     final batch = _db.batch();

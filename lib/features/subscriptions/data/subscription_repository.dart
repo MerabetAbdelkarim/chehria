@@ -48,7 +48,8 @@ class SubscriptionRepository {
   /// - the account balance decremented,
   /// - `nextDueDate` advanced one cycle, `lastPaidAt` set.
   ///
-  /// All three land in a single batch.
+  /// All three land in a single batch. The operation remembers the previous
+  /// due date so deleting it puts the bill back where it was.
   Future<void> recordPayment({
     required String uid,
     required Subscription sub,
@@ -71,13 +72,15 @@ class SubscriptionRepository {
       categoryId: sub.categoryId,
       note: sub.name,
       source: TxnSource.subscription,
+      linkedId: sub.id,
+      previousDueDate: sub.nextDueDate,
     );
 
     final batch = _db.batch();
     batch.set(txnRef, txn.toMap());
     batch.set(_col(uid).doc(sub.id), {
       'nextDueDate': Timestamp.fromDate(
-        nextDueAfter(sub.nextDueDate, sub.cycle, paidAt),
+        dueAfterPayment(sub.nextDueDate, sub.cycle, paidAt),
       ),
       'lastPaidAt': Timestamp.fromDate(paidAt),
       'updatedAt': FieldValue.serverTimestamp(),

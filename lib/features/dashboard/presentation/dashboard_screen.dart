@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/default_data.dart';
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/localization/s.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
@@ -59,7 +61,7 @@ class DashboardScreen extends ConsumerWidget {
       type: TxnType.income,
       amount: data.salary,
       date: data.period.start,
-      categoryId: 'cat_salary',
+      categoryId: AppConstants.catSalary,
       accountId: accountId,
       note: s.recordSalary,
       source: TxnSource.salary,
@@ -68,7 +70,8 @@ class DashboardScreen extends ConsumerWidget {
     try {
       await ref.read(transactionRepositoryProvider).add(uid, txn);
       if (context.mounted) showAppSnack(context, s.salaryRecorded);
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'dashboard_screen');
       if (context.mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

@@ -289,6 +289,14 @@ class S {
     'لا يمكن حذف حساب توجد عليه عمليات',
     'Impossible de supprimer un compte avec des opérations',
   );
+  String get categoryInUse => _t(
+    'لا يمكن حذف فئة مستعملة في عمليات أو ميزانيات أو اشتراكات',
+    'Impossible de supprimer une catégorie utilisée par des opérations, budgets ou abonnements',
+  );
+  String get categorySystemLocked => _t(
+    'هذه فئة أساسية يستعملها التطبيق تلقائياً: يمكن تعديلها لكن لا يمكن حذفها',
+    'Catégorie système utilisée automatiquement : modifiable mais non supprimable',
+  );
   String get noAccounts => _t('لا توجد حسابات', 'Aucun compte');
 
   // ----------------------------------------------------------- categories
@@ -326,6 +334,14 @@ class S {
   String get deleteTransactionConfirm => _t(
     'حذف العملية سيعيد المبلغ إلى الحساب. متابعة؟',
     'La suppression remboursera le montant sur le compte. Continuer ?',
+  );
+  String get deleteLinkedTransactionConfirm => _t(
+    'هذه العملية مرتبطة بدين أو اشتراك أو دَّارة. حذفها سيعيد المبلغ إلى الحساب ويلغي الدفعة المرتبطة بها. متابعة؟',
+    'Cette opération est liée à une dette, un abonnement ou une dawra. La supprimer rembourse le compte et annule le paiement lié. Continuer ?',
+  );
+  String get linkedTransactionHint => _t(
+    'المبلغ والنوع يُداران من الدين أو الاشتراك أو الدَّارة المرتبطة.',
+    "Le montant et le type sont gérés par la dette, l'abonnement ou la dawra liée.",
   );
   String get noTransactions => _t('لا توجد عمليات', 'Aucune opération');
   String get noTransactionsPeriod =>
@@ -578,6 +594,20 @@ class S {
   String get reportEmpty =>
       _t('لا توجد بيانات لهذا الشهر', 'Aucune donnée ce mois');
   String get month => _t('الشهر', 'Mois');
+
+  // ------------------------------------------------- automatic ledger notes
+  String debtPaymentReceivedNote(String person) =>
+      _t('دفعة من دين لي — $person', 'Remboursement reçu — $person');
+  String debtPaymentPaidNote(String person) =>
+      _t('دفعة لدين عليّ — $person', 'Remboursement versé — $person');
+  String dawraContributionNote(String group, String member, int round) => _t(
+    'دَّارة $group — $member (جولة $round)',
+    'Dawra $group — $member (tour $round)',
+  );
+  String dawraPotNote(String group, String receiver, int round) => _t(
+    'دَّارة $group — استلام $receiver (جولة $round)',
+    'Dawra $group — remise à $receiver (tour $round)',
+  );
 
   // ---------------------------------------------------------------- misc
   String get inPlus => _t('خلال', 'sur');

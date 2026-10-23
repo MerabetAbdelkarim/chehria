@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/formatters.dart';
@@ -40,7 +41,8 @@ class SubscriptionsScreen extends ConsumerWidget {
     try {
       await ref.read(subscriptionRepositoryProvider).delete(uid, sub.id);
       if (context.mounted) showAppSnack(context, s.subscriptionDeleted);
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'subscriptions_screen');
       if (context.mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }
@@ -65,7 +67,8 @@ class SubscriptionsScreen extends ConsumerWidget {
           .read(subscriptionRepositoryProvider)
           .recordPayment(uid: uid, sub: sub, accountId: accountId);
       if (context.mounted) showAppSnack(context, s.subscriptionPaid);
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'subscriptions_screen');
       if (context.mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }

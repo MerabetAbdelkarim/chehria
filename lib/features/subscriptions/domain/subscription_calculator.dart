@@ -38,6 +38,17 @@ DateTime nextDueAfter(DateTime due, SubscriptionCycle cycle, DateTime from) {
   return next;
 }
 
+/// Next due date once the occurrence due on [due] has been paid at [paidAt].
+///
+/// A payment always settles the current occurrence, so the date moves at
+/// least one cycle even when the bill is paid early; when it was overdue by
+/// several cycles it lands on the first occurrence not before [paidAt].
+DateTime dueAfterPayment(
+  DateTime due,
+  SubscriptionCycle cycle,
+  DateTime paidAt,
+) => nextDueAfter(advanceDueDate(due, cycle), cycle, paidAt);
+
 /// Whether the bill falls due strictly before [limit] (exclusive, the pay
 /// period end is exclusive too).
 bool isDueBefore(DateTime due, DateTime limit) => due.isBefore(limit);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/formatters.dart';
@@ -88,6 +89,13 @@ class _DebtPaymentSheetState extends ConsumerState<DebtPaymentSheet> {
     final uid = ref.read(uidProvider);
     if (uid == null) return;
 
+    final userNote = _note.text.trim();
+    final ledgerNote = userNote.isNotEmpty
+        ? userNote
+        : _debt.type == DebtType.owedToMe
+        ? s.debtPaymentReceivedNote(_debt.person)
+        : s.debtPaymentPaidNote(_debt.person);
+
     try {
       await ref
           .read(debtRepositoryProvider)
@@ -97,12 +105,14 @@ class _DebtPaymentSheetState extends ConsumerState<DebtPaymentSheet> {
             amount: amount,
             accountId: _accountId!,
             date: _date,
-            note: _note.text.trim(),
+            note: ledgerNote,
+            paymentNote: userNote,
           );
       if (!mounted) return;
       showAppSnack(context, s.paymentSaved);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'debt_payment_sheet');
       if (mounted) setState(() => _error = s.errorGeneric);
     } finally {
       if (mounted) setState(() => _saving = false);

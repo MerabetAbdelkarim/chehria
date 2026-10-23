@@ -18,7 +18,10 @@ enum TxnSource {
   manual,
   subscription,
   debt,
-  salary;
+  salary,
+
+  /// Contribution paid to, or pot received from, a rotating savings group.
+  dawra;
 
   static TxnSource fromId(String? id) => TxnSource.values.firstWhere(
     (t) => t.name == id,
@@ -42,6 +45,10 @@ class MoneyTransaction {
     this.toAccountId,
     this.note = '',
     this.source = TxnSource.manual,
+    this.linkedId,
+    this.linkedPaymentId,
+    this.linkedRound,
+    this.previousDueDate,
     this.createdAt,
   });
 
@@ -58,11 +65,29 @@ class MoneyTransaction {
 
   final String note;
   final TxnSource source;
+
+  /// Id of the debt / subscription / dawra that produced this operation, so
+  /// deleting it can undo the side effect on that document too.
+  final String? linkedId;
+
+  /// Id of the payment entry inside the linked debt or dawra.
+  final String? linkedPaymentId;
+
+  /// Dawra round this operation belongs to.
+  final int? linkedRound;
+
+  /// Subscriptions only: the due date before this payment advanced it.
+  final DateTime? previousDueDate;
+
   final DateTime? createdAt;
 
   bool get isIncome => type == TxnType.income;
   bool get isExpense => type == TxnType.expense;
   bool get isTransfer => type == TxnType.transfer;
+
+  /// Created by a debt, subscription or dawra action: its amount, type and
+  /// account are owned by that document and must not be edited freely.
+  bool get isLinked => linkedId != null;
 
   /// Same operation, identified by a Firestore document id.
   MoneyTransaction withId(String newId) => MoneyTransaction(
@@ -76,6 +101,10 @@ class MoneyTransaction {
     toAccountId: toAccountId,
     note: note,
     source: source,
+    linkedId: linkedId,
+    linkedPaymentId: linkedPaymentId,
+    linkedRound: linkedRound,
+    previousDueDate: previousDueDate,
     createdAt: createdAt,
   );
 
@@ -112,6 +141,10 @@ class MoneyTransaction {
       toAccountId: toAccountId ?? this.toAccountId,
       note: note ?? this.note,
       source: source ?? this.source,
+      linkedId: linkedId,
+      linkedPaymentId: linkedPaymentId,
+      linkedRound: linkedRound,
+      previousDueDate: previousDueDate,
       createdAt: createdAt,
     );
   }
@@ -129,6 +162,10 @@ class MoneyTransaction {
       toAccountId: d['toAccountId'] as String?,
       note: d['note'] as String? ?? '',
       source: TxnSource.fromId(d['source'] as String?),
+      linkedId: d['linkedId'] as String?,
+      linkedPaymentId: d['linkedPaymentId'] as String?,
+      linkedRound: (d['linkedRound'] as num?)?.toInt(),
+      previousDueDate: (d['previousDueDate'] as Timestamp?)?.toDate(),
       createdAt: (d['createdAt'] as Timestamp?)?.toDate(),
     );
   }
@@ -143,6 +180,11 @@ class MoneyTransaction {
     'toAccountId': toAccountId,
     'note': note,
     'source': source.name,
+    if (linkedId != null) 'linkedId': linkedId,
+    if (linkedPaymentId != null) 'linkedPaymentId': linkedPaymentId,
+    if (linkedRound != null) 'linkedRound': linkedRound,
+    if (previousDueDate != null)
+      'previousDueDate': Timestamp.fromDate(previousDueDate!),
     'createdAt': createdAt != null
         ? Timestamp.fromDate(createdAt!)
         : FieldValue.serverTimestamp(),

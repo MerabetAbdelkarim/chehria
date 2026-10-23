@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/validators.dart';
@@ -88,7 +89,8 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.budgetSaved);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'budget_form_sheet');
       if (mounted) setState(() => _error = s.errorGeneric);
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -112,7 +114,8 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
       if (!mounted) return;
       showAppSnack(context, s.budgetDeleted);
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, st, reason: 'budget_form_sheet');
       if (mounted) showAppSnack(context, s.errorGeneric, error: true);
     }
   }
