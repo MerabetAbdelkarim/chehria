@@ -304,7 +304,7 @@ class _BudgetTile extends ConsumerWidget {
   }
 }
 
-/// `Ø£ÙƒØªÙˆØ¨Ø± 2026` / `octobre 2026` from a `YYYY-MM` key.
+/// `أكتوبر 2026` / `octobre 2026` from a `YYYY-MM` key.
 String monthLabelOf(String monthKey, {required bool isAr}) {
   final parts = monthKey.split('-');
   return monthLabel(int.parse(parts[0]), int.parse(parts[1]), isAr: isAr);

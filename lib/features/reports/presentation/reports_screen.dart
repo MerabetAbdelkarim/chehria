@@ -239,7 +239,7 @@ class ReportsScreen extends ConsumerWidget {
                             ),
                             subtitle: Text(
                               '${row.count} ${s.reportOperations}'
-                              ' â€¢ ${formatPercent(report.expense == 0 ? 0 : row.total / report.expense, isAr: s.isAr)}',
+                              ' • ${formatPercent(report.expense == 0 ? 0 : row.total / report.expense, isAr: s.isAr)}',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),

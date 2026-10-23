@@ -43,7 +43,7 @@ class DartTile extends ConsumerWidget {
           done
               ? '${group.roundsDone} ${s.roundsDone}'
               : '${s.currentRound} ${group.currentRound}/${group.memberCount}'
-                    ' â€¢ ${s.nextReceiver}: ${group.nextReceiver}',
+                    ' • ${s.nextReceiver}: ${group.nextReceiver}',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: theme.textTheme.bodySmall?.copyWith(
@@ -78,7 +78,7 @@ class DartTile extends ConsumerWidget {
 
 /// Human-readable contribution label reused across dart screens.
 String contributionLabel(DartGroup group, {required bool isAr}) => isAr
-    ? 'ÙƒÙ„ Ø¹Ø¶Ùˆ ${group.contributionAmount} Ø¯Ø¬'
+    ? 'كل عضو ${group.contributionAmount} دج'
     : '${group.contributionAmount} DA / membre';
 
 /// `12/10/2026` label for payment dates.

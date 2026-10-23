@@ -559,7 +559,7 @@ class S {
       _t('أنشئ هدفاً لهذا المناسب', 'Créer un objectif pour cet événement');
   String get seasonalGoalName => _t('اسم هدف التحضير', 'Nom de l\'objectif');
   String get amountHintOptional =>
-      _t('المبلغ التقديري (اختي��ي)', 'Montant estimé (facultatif)');
+      _t('المبلغ التقديري (اختياري)', 'Montant estimé (facultatif)');
   String get noUpcomingEvents =>
       _t('لا توجد مناسبات قادمة', 'Aucun événement à venir');
   String get seasonalGoals => _t('أهداف التحضير', 'Objectifs de préparation');
@@ -586,6 +586,6 @@ class S {
       _t('Firebase غير مهيّأ', 'Firebase non configuré');
   String get setupRequiredBody => _t(
     'شغّل الأمرين التاليين في جذر المشروع ثم أعد تشغيل التطبيق:\n\ndart pub global activate flutterfire_cli\nflutterfire configure',
-    'Exécitez ces deux commandes à la racine du projet puis relancez l\'application :\n\ndart pub global activate flutterfire_cli\nflutterfire configure',
+    'Exécutez ces deux commandes à la racine du projet puis relancez l\'application :\n\ndart pub global activate flutterfire_cli\nflutterfire configure',
   );
 }

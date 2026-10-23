@@ -71,7 +71,7 @@ class DartDetailScreen extends ConsumerWidget {
       context,
       title: s.markReceived,
       message:
-          '${s.roundN} ${group.currentRound} â€” $receiver '
+          '${s.roundN} ${group.currentRound} — $receiver '
           '${formatDzd(group.pot)}',
       confirmLabel: s.confirm,
       destructive: false,
@@ -173,7 +173,7 @@ class DartDetailScreen extends ConsumerWidget {
                     finished
                         ? contributionLabel(group, isAr: s.isAr)
                         : '${s.nextReceiver}: ${group.nextReceiver}'
-                              ' â€¢ ${s.contributionAmount} '
+                              ' • ${s.contributionAmount} '
                               '${formatAmount(group.contributionAmount, millionsMode: millions)}',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
@@ -216,7 +216,7 @@ class DartDetailScreen extends ConsumerWidget {
                 onPressed: () => _payContribution(context, ref, group),
                 icon: const Icon(Icons.payments_outlined),
                 label: Text(
-                  '${s.payContribution} â€” '
+                  '${s.payContribution} — '
                   '${formatAmount(group.contributionAmount, millionsMode: millions)}',
                 ),
               ),
@@ -226,7 +226,7 @@ class DartDetailScreen extends ConsumerWidget {
                 onPressed: () => _receive(context, ref, group, toMe: true),
                 icon: const Icon(Icons.savings_outlined),
                 label: Text(
-                  '${s.receiveRound} â€” '
+                  '${s.receiveRound} — '
                   '${formatAmount(group.pot, millionsMode: millions)}',
                 ),
               )
