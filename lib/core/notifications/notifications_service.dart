@@ -85,23 +85,32 @@ class NotificationsService {
     await _plugin.cancelAll();
   }
 
-  /// Cancels everything and schedules [reminders] again.
-  Future<void> sync(List<Reminder> reminders) async {
+  /// Cancels everything and schedules [reminders] again. The channel labels
+  /// are shown in the Android system settings, in the user's language.
+  Future<void> sync(
+    List<Reminder> reminders, {
+    required String channelName,
+    required String channelDescription,
+  }) async {
     if (!_initialized) return;
     await _plugin.cancelAll();
     final now = DateTime.now();
     for (final reminder in reminders) {
       if (!reminder.fireAt.isAfter(now)) continue;
-      await _schedule(reminder);
+      await _schedule(reminder, channelName, channelDescription);
     }
   }
 
-  Future<void> _schedule(Reminder reminder) async {
+  Future<void> _schedule(
+    Reminder reminder,
+    String channelName,
+    String channelDescription,
+  ) async {
     final details = NotificationDetails(
       android: AndroidNotificationDetails(
         channelId,
-        'التذكيرات',
-        channelDescription: 'تذكيرات باستحقاقات الاشتراكات والديون ويوم الراتب',
+        channelName,
+        channelDescription: channelDescription,
         importance: Importance.high,
         priority: Priority.high,
       ),

@@ -1,5 +1,6 @@
 import '../../../core/domain/pay_period.dart';
 import '../../debts/models/debt.dart';
+import '../../goals/models/goal.dart';
 import '../../settings/models/user_settings.dart';
 import '../../transactions/models/money_transaction.dart';
 
@@ -23,6 +24,8 @@ class DashboardData {
     required this.totalOwedToMe,
     required this.totalIOwe,
     required this.salaryRecordedAmount,
+    required this.goalsSetAside,
+    required this.dawraNet,
     required this.now,
   });
 
@@ -48,7 +51,18 @@ class DashboardData {
   /// Remaining parts of the debts I owe that fall due before the next pay day.
   final int debtsDue;
 
-  /// salary + extra income - expenses - unpaid subscriptions - due debts.
+  /// Net amount moved into savings goals during the period (deposits minus
+  /// withdrawals). That money left the wallets without being an expense, so
+  /// it is no longer available to spend.
+  final int goalsSetAside;
+
+  /// Dawra pots received minus contributions/pots paid during the period.
+  /// Kept out of income/expenses (it is savings, not consumption) but it is
+  /// real cash, so it still counts in [remaining].
+  final int dawraNet;
+
+  /// salary + extra income - expenses - unpaid subscriptions - due debts
+  /// - goals set aside + dawra net.
   final int remaining;
 
   final int daysLeft;
@@ -74,6 +88,18 @@ class DashboardData {
   int get netDebts => totalOwedToMe - totalIOwe;
 }
 
+/// Deposits minus withdrawals of every goal whose entry falls in [period].
+int goalsNetSetAside(List<Goal> goals, PayPeriod period) {
+  var total = 0;
+  for (final goal in goals) {
+    for (final entry in goal.entries) {
+      if (!period.contains(entry.date)) continue;
+      total += entry.withdraw ? -entry.amount : entry.amount;
+    }
+  }
+  return total;
+}
+
 DashboardData buildDashboard({
   required DateTime now,
   required UserSettings settings,
@@ -81,6 +107,7 @@ DashboardData buildDashboard({
   required List<MoneyTransaction> previousTransactions,
   required List<Debt> debts,
   int unpaidSubscriptionsDue = 0,
+  List<Goal> goals = const [],
 }) {
   final payday = settings.payday.clamp(1, 31);
   final period = PayPeriodCalculator.of(now: now, payday: payday);
@@ -89,10 +116,15 @@ DashboardData buildDashboard({
   var income = 0;
   var salaryRecorded = 0;
   var expenses = 0;
+  var dawraNet = 0;
   final byCategory = <String, int>{};
 
   for (final txn in periodTransactions) {
     if (txn.type == TxnType.transfer) continue;
+    if (txn.source == TxnSource.dawra) {
+      dawraNet += txn.isIncome ? txn.amount : -txn.amount;
+      continue;
+    }
     if (txn.type == TxnType.income) {
       income += txn.amount;
       if (txn.source == TxnSource.salary) salaryRecorded += txn.amount;
@@ -106,6 +138,7 @@ DashboardData buildDashboard({
   var previousIncome = 0;
   var previousExpenses = 0;
   for (final txn in previousTransactions) {
+    if (txn.source == TxnSource.dawra) continue;
     if (txn.type == TxnType.income) {
       previousIncome += txn.amount;
     } else if (txn.type == TxnType.expense) {
@@ -126,12 +159,15 @@ DashboardData buildDashboard({
   }
 
   final extraIncome = income - salaryRecorded;
+  final goalsSetAside = goalsNetSetAside(goals, period);
   final remaining =
       settings.salary +
       extraIncome -
       expenses -
       unpaidSubscriptionsDue -
-      debtsDue;
+      debtsDue -
+      goalsSetAside +
+      dawraNet;
 
   final daysLeft = period.daysLeft(now);
   final dailyAllowance = daysLeft > 0 ? remaining / daysLeft : 0.0;
@@ -155,5 +191,7 @@ DashboardData buildDashboard({
     totalOwedToMe: owedToMe,
     totalIOwe: iOwe,
     salaryRecordedAmount: salaryRecorded,
+    goalsSetAside: goalsSetAside,
+    dawraNet: dawraNet,
   );
 }

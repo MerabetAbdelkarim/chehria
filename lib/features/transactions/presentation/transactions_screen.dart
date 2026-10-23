@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/default_data.dart';
 import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
@@ -57,6 +58,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     final s = ref.watch(sProvider);
     final theme = Theme.of(context);
     final txns = ref.watch(recentTransactionsProvider);
+    final limit = ref.watch(transactionsLimitProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(s.transactions)),
@@ -88,7 +90,10 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
           ),
           Expanded(
             child: AsyncValueView(
-              value: txns,
+              // Keep the current page on screen while the next one loads.
+              value: txns.hasValue && !txns.hasError
+                  ? AsyncValue.data(txns.requireValue)
+                  : txns,
               onRetry: () => ref.invalidate(recentTransactionsProvider),
               data: (all) {
                 final items = _filter == null
@@ -154,6 +159,26 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                       ),
                     );
                   }
+                }
+
+                // A full page means older operations may exist.
+                if (all.length >= limit) {
+                  children.add(
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: txns.isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : OutlinedButton.icon(
+                              onPressed: () =>
+                                  ref
+                                      .read(transactionsLimitProvider.notifier)
+                                      .state += AppConstants
+                                      .transactionsPageSize,
+                              icon: const Icon(Icons.expand_more_rounded),
+                              label: Text(s.loadMore),
+                            ),
+                    ),
+                  );
                 }
 
                 return ListView(

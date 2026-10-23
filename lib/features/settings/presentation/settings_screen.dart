@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/notifications/notifications_service.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/confirm_dialog.dart';
 import '../../budgets/presentation/budgets_screen.dart';
 import '../../categories/presentation/categories_screen.dart';
@@ -107,7 +108,7 @@ class SettingsScreen extends ConsumerWidget {
                   trailing: Text(
                     settings == null || settings.salary <= 0
                         ? '—'
-                        : '${settings.salary} دج',
+                        : formatDzd(settings.salary),
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),

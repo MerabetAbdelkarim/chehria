@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/confirm_dialog.dart';
@@ -171,7 +172,7 @@ class _GoalMoneySheetState extends ConsumerState<GoalMoneySheet> {
                   DropdownMenuItem(
                     value: a.id,
                     child: Text(
-                      '${a.name} — ${a.balance} دج',
+                      '${a.name} — ${formatDzd(a.balance)}',
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

@@ -76,6 +76,8 @@ Future<void> syncReminders(Ref ref) async {
         subscriptions: inputs.subscriptions,
         debts: inputs.debts,
       ),
+      channelName: inputs.s.reminderChannelName,
+      channelDescription: inputs.s.reminderChannelDescription,
     );
   } catch (e, st) {
     reportError(e, st, reason: 'reminders_provider');

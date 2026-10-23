@@ -237,6 +237,9 @@ class S {
   String get income => _t('الدخل', 'Revenus');
   String get expenses => _t('المصاريف', 'Dépenses');
   String get extraIncome => _t('دخل إضافي', 'Revenus supplémentaires');
+  String get setAsideInGoals =>
+      _t('مُدّخر في الأهداف', 'Mis de côté (objectifs)');
+  String get dawraNet => _t('صافي الدَّارة', 'Solde dawra');
   String get balance => _t('الرصيد', 'Solde');
   String get thisPeriod => _t('هذه الفترة', 'Cette période');
   String get lastPeriod => _t('الفترة السابقة', 'Période précédente');
@@ -343,6 +346,7 @@ class S {
     'المبلغ والنوع يُداران من الدين أو الاشتراك أو الدَّارة المرتبطة.',
     "Le montant et le type sont gérés par la dette, l'abonnement ou la dawra liée.",
   );
+  String get loadMore => _t('عرض عمليات أقدم', 'Afficher plus');
   String get noTransactions => _t('لا توجد عمليات', 'Aucune opération');
   String get noTransactionsPeriod =>
       _t('لا توجد عمليات في هذه الفترة', 'Aucune opération sur cette période');
@@ -444,6 +448,11 @@ class S {
   String get notificationsDenied => _t(
     'لم يتم منح إذن الإشعارات من النظام',
     'Permission de notification non accordée',
+  );
+  String get reminderChannelName => _t('التذكيرات', 'Rappels');
+  String get reminderChannelDescription => _t(
+    'تذكيرات باستحقاقات الاشتراكات والديون ويوم الراتب',
+    'Rappels des échéances d’abonnements, de dettes et du jour de paie',
   );
   String get notificationsOn => _t('التذكيرات مفعّلة', 'Rappels activés');
   String get notificationsOff => _t('التذكيرات متوقفة', 'Rappels désactivés');

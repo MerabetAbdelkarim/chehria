@@ -1,18 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/domain/pay_period.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../settings/providers/settings_providers.dart';
 import '../models/money_transaction.dart';
 
+/// How many operations the history screen currently shows; grows one page
+/// at a time ("load more") and resets when the screen is closed.
+final transactionsLimitProvider = StateProvider.autoDispose<int>(
+  (ref) => AppConstants.transactionsPageSize,
+);
+
 /// The most recent operations (transactions screen).
-final recentTransactionsProvider = StreamProvider<List<MoneyTransaction>>((
-  ref,
-) {
-  final uid = ref.watch(uidProvider);
-  if (uid == null) return Stream<List<MoneyTransaction>>.value(const []);
-  return ref.watch(transactionRepositoryProvider).watchRecent(uid);
-});
+final recentTransactionsProvider =
+    StreamProvider.autoDispose<List<MoneyTransaction>>((ref) {
+      final uid = ref.watch(uidProvider);
+      final limit = ref.watch(transactionsLimitProvider);
+      if (uid == null) return Stream<List<MoneyTransaction>>.value(const []);
+      return ref
+          .watch(transactionRepositoryProvider)
+          .watchRecent(uid, limit: limit);
+    });
 
 /// Operations of the **current** pay period.
 final periodTransactionsProvider = StreamProvider<List<MoneyTransaction>>((

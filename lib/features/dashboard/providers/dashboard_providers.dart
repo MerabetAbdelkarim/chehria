@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/core_providers.dart';
 import '../../debts/providers/debts_providers.dart';
+import '../../goals/providers/goals_providers.dart';
 import '../../settings/providers/settings_providers.dart';
 import '../../subscriptions/providers/subscriptions_providers.dart';
 import '../../transactions/providers/transactions_providers.dart';
@@ -16,6 +17,7 @@ final dashboardProvider = Provider<AsyncValue<DashboardData>>((ref) {
   final previousAsync = ref.watch(previousPeriodTransactionsProvider);
   final debtsAsync = ref.watch(debtsProvider);
   final subscriptionsDue = ref.watch(subscriptionsDueTotalProvider);
+  final goals = ref.watch(goalsOrNullProvider);
   final now = ref.watch(nowProvider);
 
   final values = <AsyncValue<Object?>>[
@@ -48,6 +50,7 @@ final dashboardProvider = Provider<AsyncValue<DashboardData>>((ref) {
       previousTransactions: previousAsync.valueOrNull ?? const [],
       debts: debtsAsync.valueOrNull ?? const [],
       unpaidSubscriptionsDue: subscriptionsDue,
+      goals: goals,
     ),
   );
 });
@@ -60,4 +63,5 @@ Future<void> refreshDashboard(WidgetRef ref) async {
   ref.invalidate(debtsProvider);
   ref.invalidate(subscriptionsProvider);
   ref.invalidate(settingsProvider);
+  ref.invalidate(goalsProvider);
 }

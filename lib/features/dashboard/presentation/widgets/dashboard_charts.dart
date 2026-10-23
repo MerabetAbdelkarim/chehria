@@ -89,6 +89,22 @@ class IncomeExpenseCard extends ConsumerWidget {
               amount: data.extraIncome,
               millions: millions,
             ),
+            if (data.goalsSetAside != 0) ...[
+              const SizedBox(height: 8),
+              _MiniRow(
+                label: s.setAsideInGoals,
+                amount: -data.goalsSetAside,
+                millions: millions,
+              ),
+            ],
+            if (data.dawraNet != 0) ...[
+              const SizedBox(height: 8),
+              _MiniRow(
+                label: s.dawraNet,
+                amount: data.dawraNet,
+                millions: millions,
+              ),
+            ],
           ],
         ),
       ),

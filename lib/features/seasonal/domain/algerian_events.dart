@@ -1,8 +1,9 @@
 /// Algerian seasonal events used for early planning (Ramadan, school year...).
 ///
 /// Hijri-based dates (Ramadan, Aïd) change every year; the table below holds
-/// Maghrib-announced Gregorian approximations for Algeria until 2030.
-/// The rest are fixed Gregorian dates.
+/// Maghrib-announced Gregorian approximations for Algeria until 2030. Later
+/// years are extrapolated with the mean lunar year (±2 days), which is enough
+/// for planning savings months ahead. The rest are fixed Gregorian dates.
 library;
 
 /// Known Ramadan starts in Algeria (Maghrib announcements, ±1 day).
@@ -14,6 +15,33 @@ final Map<int, DateTime> ramadanStarts = {
   2029: DateTime(2029, 1, 16),
   2030: DateTime(2030, 1, 6),
 };
+
+/// Mean length of the Hijri year in days.
+const double lunarYearDays = 354.36707;
+
+/// Every Ramadan start falling in Gregorian [year], soonest first.
+///
+/// Uses [ramadanStarts] when the date is known, otherwise steps forward from
+/// the last known start by whole lunar years. A Gregorian year can contain
+/// two Ramadans (2030: January and December).
+List<DateTime> ramadanStartsIn(int year) {
+  final known = ramadanStarts.values.toList()..sort();
+  final anchor = known.last;
+  final result = [
+    for (final d in known)
+      if (d.year == year) d,
+  ];
+  if (year < anchor.year) return result;
+
+  for (var n = 1; ; n++) {
+    final days = (n * lunarYearDays).round();
+    final d = DateTime(anchor.year, anchor.month, anchor.day + days);
+    if (d.year > year) break;
+    if (d.year == year) result.add(d);
+  }
+  result.sort();
+  return result;
+}
 
 /// One upcoming event the user can prepare for.
 class SeasonalEvent {
@@ -44,18 +72,21 @@ List<SeasonalEvent> upcomingEvents(DateTime now, {int horizonMonths = 14}) {
   }
 
   for (final year in [now.year - 1, now.year, now.year + 1, now.year + 2]) {
-    final ramadan = ramadanStarts[year];
-    if (ramadan != null) {
+    final ramadans = ramadanStartsIn(year);
+    for (var i = 0; i < ramadans.length; i++) {
+      final ramadan = ramadans[i];
+      // The first one keeps the historical id so linked goals stay linked.
+      final suffix = i == 0 ? '$year' : '${year}b';
       add(
-        'ramadan_$year',
+        'ramadan_$suffix',
         'بداية رمضان $year',
         'Début du Ramadan $year',
         ramadan,
       );
       add(
-        'eid_$year',
-        'عيد الفطر $year',
-        'Aïd el-Fitr $year',
+        'eid_$suffix',
+        'عيد الفطر ${ramadan.add(const Duration(days: 30)).year}',
+        'Aïd el-Fitr ${ramadan.add(const Duration(days: 30)).year}',
         ramadan.add(const Duration(days: 30)),
       );
     }
@@ -73,7 +104,7 @@ List<SeasonalEvent> upcomingEvents(DateTime now, {int horizonMonths = 14}) {
     );
     add(
       'november_$year',
-      'الثامن من نوفمبر $year',
+      'أول نوفمبر $year',
       '1er Novembre $year',
       DateTime(year, 11, 1),
     );
