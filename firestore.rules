@@ -3,16 +3,163 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Every user can only touch their own subtree:
-    // users/{uid}/**  (profile, accounts, categories, transactions,
-    // subscriptions, debts, budgets, goals, dart)
-    match /users/{uid} {
-      allow read, write: if request.auth != null
-                         && request.auth.uid == uid;
+    // ------------------------------------------------------------ helpers
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
 
-      match /{subcollection}/{document=**} {
-        allow read, write: if request.auth != null
-                           && request.auth.uid == uid;
+    // Upper bound of one amount in dinars (AppConstants.maxAmount).
+    function maxAmount() {
+      return 99999999999;
+    }
+
+    // `request.resource.data` is the document *after* the write, so partial
+    // updates and FieldValue.increment are validated on their result.
+    // Optional fields are only checked when present: documents written by
+    // older versions of the app stay editable.
+    function present(d, f) {
+      return f in d && d[f] != null;
+    }
+    function optString(d, f, max) {
+      return !present(d, f) || (d[f] is string && d[f].size() <= max);
+    }
+    function optInt(d, f) {
+      return !present(d, f) || (d[f] is int && d[f] >= -maxAmount() && d[f] <= maxAmount());
+    }
+    function optNonNegInt(d, f) {
+      return !present(d, f) || (d[f] is int && d[f] >= 0 && d[f] <= maxAmount());
+    }
+    function positiveAmount(d, f) {
+      return d[f] is int && d[f] > 0 && d[f] <= maxAmount();
+    }
+    function optOneOf(d, f, values) {
+      return !present(d, f) || d[f] in values;
+    }
+    function optTimestamp(d, f) {
+      return !present(d, f) || d[f] is timestamp;
+    }
+    function optBool(d, f) {
+      return !present(d, f) || d[f] is bool;
+    }
+    function optList(d, f, max) {
+      return !present(d, f) || (d[f] is list && d[f].size() <= max);
+    }
+
+    // ------------------------------------------------------------ profile
+    function validProfile(d) {
+      return optString(d, 'displayName', 120)
+          && optString(d, 'email', 320)
+          && optNonNegInt(d, 'salary')
+          && (!present(d, 'payday') || (d.payday is int && d.payday >= 1 && d.payday <= 31))
+          && optOneOf(d, 'locale', ['ar', 'fr'])
+          && optOneOf(d, 'currencyDisplay', ['dzd', 'millions'])
+          && optOneOf(d, 'themeMode', ['system', 'light', 'dark'])
+          && optBool(d, 'notificationsEnabled')
+          && optBool(d, 'setupCompleted');
+    }
+
+    // ------------------------------------------------------- collections
+    function validAccount(d) {
+      return d.name is string && d.name.size() > 0 && d.name.size() <= 120
+          && optOneOf(d, 'type', ['cash', 'ccp', 'card', 'other'])
+          && optInt(d, 'balance')
+          && optInt(d, 'colorValue');
+    }
+
+    function validCategory(d) {
+      return d.nameAr is string && d.nameAr.size() <= 120
+          && d.nameFr is string && d.nameFr.size() <= 120
+          && optOneOf(d, 'kind', ['both', 'expense', 'income'])
+          && optInt(d, 'iconCode')
+          && optInt(d, 'colorValue')
+          && optBool(d, 'isDefault');
+    }
+
+    function validTransaction(d) {
+      return d.type in ['income', 'expense', 'transfer']
+          && positiveAmount(d, 'amount')
+          && d.date is timestamp
+          && optOneOf(d, 'source', ['manual', 'subscription', 'debt', 'salary', 'dawra'])
+          && optString(d, 'note', 2000)
+          && optString(d, 'categoryId', 128)
+          && optString(d, 'accountId', 128)
+          && optString(d, 'fromAccountId', 128)
+          && optString(d, 'toAccountId', 128)
+          && optString(d, 'linkedId', 128)
+          && optString(d, 'linkedPaymentId', 128)
+          && optNonNegInt(d, 'linkedRound')
+          && optTimestamp(d, 'previousDueDate');
+    }
+
+    function validDebt(d) {
+      return d.type in ['iOwe', 'owedToMe']
+          && d.person is string && d.person.size() > 0 && d.person.size() <= 120
+          && positiveAmount(d, 'amount')
+          && d.date is timestamp
+          && optTimestamp(d, 'dueDate')
+          && optString(d, 'phone', 30)
+          && optString(d, 'note', 2000)
+          && optList(d, 'payments', 500)
+          && optBool(d, 'addToBalance')
+          && optString(d, 'balanceAccountId', 128);
+    }
+
+    function validSubscription(d) {
+      return d.name is string && d.name.size() > 0 && d.name.size() <= 120
+          && positiveAmount(d, 'amount')
+          && d.cycle in ['weekly', 'monthly', 'yearly']
+          && d.nextDueDate is timestamp
+          && optBool(d, 'isActive')
+          && optString(d, 'note', 2000)
+          && optTimestamp(d, 'lastPaidAt');
+    }
+
+    function validBudget(d) {
+      return d.month is string && d.month.matches('^[0-9]{4}-[0-9]{2}$')
+          && d.categoryId is string
+          && positiveAmount(d, 'limit');
+    }
+
+    function validGoal(d) {
+      return d.name is string && d.name.size() > 0 && d.name.size() <= 120
+          && optNonNegInt(d, 'targetAmount')
+          && optNonNegInt(d, 'savedAmount')
+          && optOneOf(d, 'kind', ['saving', 'seasonal'])
+          && optTimestamp(d, 'deadline')
+          && optList(d, 'entries', 1000);
+    }
+
+    function validDawra(d) {
+      return d.name is string && d.name.size() > 0 && d.name.size() <= 120
+          && positiveAmount(d, 'contributionAmount')
+          && d.memberNames is list && d.memberNames.size() >= 2 && d.memberNames.size() <= 100
+          && d.currentRound is int && d.currentRound >= 1
+          && optList(d, 'payments', 5000);
+    }
+
+    function validFor(collection, d) {
+      return (collection == 'accounts' && validAccount(d))
+          || (collection == 'categories' && validCategory(d))
+          || (collection == 'transactions' && validTransaction(d))
+          || (collection == 'debts' && validDebt(d))
+          || (collection == 'subscriptions' && validSubscription(d))
+          || (collection == 'budgets' && validBudget(d))
+          || (collection == 'goals' && validGoal(d))
+          || (collection == 'dart' && validDawra(d));
+    }
+
+    // -------------------------------------------------------------- rules
+    // Every user can only touch their own subtree, and only with well-formed
+    // documents: users/{uid}/{accounts, categories, transactions,
+    // subscriptions, debts, budgets, goals, dart}.
+    match /users/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid) && validProfile(request.resource.data);
+
+      match /{collection}/{docId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+                              && validFor(collection, request.resource.data);
       }
     }
 
