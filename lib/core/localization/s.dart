@@ -193,6 +193,22 @@ class S {
   String get account => _t('الحساب', 'Compte');
   String get salaryAndPayday =>
       _t('الراتب ويوم الدفع', 'Salaire et jour de paie');
+
+  // Settings sections and short labels.
+  String get mySalary => _t('راتبي', 'Mon salaire');
+  String get moneyTools => _t('أدوات المال', 'Outils');
+  String get preferences => _t('التفضيلات', 'Préférences');
+  String get accountAndData => _t('الحساب والبيانات', 'Compte et données');
+  String get setUpSalary =>
+      _t('حدّد راتبك ويوم استلامه', 'Indiquez votre salaire et jour de paie');
+  String paydayOfMonth(int day) =>
+      _t('يوم $day من كل شهر', 'le $day de chaque mois');
+  String get toolGoals => _t('الأهداف', 'Objectifs');
+  String get toolSeasonal => _t('المواسم', 'Saisons');
+  String get currencyDzdShort => _t('بالدينار', 'En dinars');
+  String get currencyMillionsShort => _t('بالمليون', 'En millions');
+  String get remindersOn => _t('مفعّلة', 'Activés');
+  String get remindersOff => _t('متوقفة', 'Désactivés');
   String get savedDone => _t('تم الحفظ', 'Enregistré');
   String get setupLater => _t(
     'يمكنك تعديلها لاحقاً من الإعدادات',

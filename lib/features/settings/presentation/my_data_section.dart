@@ -11,10 +11,14 @@ import '../../../core/notifications/notifications_service.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/widgets/confirm_dialog.dart';
+import 'settings_widgets.dart';
 
-/// Settings card: JSON backup and permanent account deletion.
+/// "Account & data": JSON backup, sign out, and permanent account deletion
+/// (last, in red).
 class MyDataSection extends ConsumerWidget {
-  const MyDataSection({super.key});
+  const MyDataSection({super.key, required this.onSignOut});
+
+  final VoidCallback onSignOut;
 
   Future<void> _exportBackup(BuildContext context, WidgetRef ref) async {
     final s = ref.read(sProvider);
@@ -138,42 +142,30 @@ class MyDataSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(sProvider);
-    final theme = Theme.of(context);
 
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
-            child: Text(
-              s.myData,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.download_rounded),
-            title: Text(s.exportBackup),
-            subtitle: Text(s.exportBackupHint),
-            onTap: () => _exportBackup(context, ref),
-          ),
-          const Divider(height: 1),
-          ListTile(
-            leading: Icon(
-              Icons.delete_forever_rounded,
-              color: theme.colorScheme.error,
-            ),
-            title: Text(
-              s.deleteUserAccount,
-              style: TextStyle(color: theme.colorScheme.error),
-            ),
-            subtitle: Text(s.deleteUserAccountHint),
-            onTap: () => _deleteAccount(context, ref),
-          ),
-        ],
-      ),
+    return SettingsSection(
+      title: s.accountAndData,
+      children: [
+        SettingsTile(
+          icon: Icons.download_rounded,
+          title: s.exportBackup,
+          subtitle: s.exportBackupHint,
+          onTap: () => _exportBackup(context, ref),
+        ),
+        SettingsTile(
+          icon: Icons.logout_rounded,
+          title: s.signOut,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          onTap: onSignOut,
+        ),
+        SettingsTile(
+          icon: Icons.delete_forever_rounded,
+          title: s.deleteUserAccount,
+          subtitle: s.deleteUserAccountHint,
+          destructive: true,
+          onTap: () => _deleteAccount(context, ref),
+        ),
+      ],
     );
   }
 }
