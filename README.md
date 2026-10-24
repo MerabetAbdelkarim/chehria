@@ -1,8 +1,5 @@
 # مصاريفي (Masarifi)
 
-**📲 تحميل التطبيق / Télécharger l'application:**
-**https://merabetabdelkarim.github.io/masarifi/**
-
 A personal-finance app for a **salaried person in Algeria**: set your monthly
 salary and pay day, then the app tells you — every day — how much you may still
 spend until the next salary.
@@ -155,8 +152,6 @@ flutter test      # 167 tests
 
 CI (`.github/workflows/ci.yml`) runs format, analyze, the Flutter tests and
 the Firestore rules tests on every push to `main` and every pull request.
-`.github/workflows/pages.yml` publishes `landing page/` to GitHub Pages
-whenever it changes on `main`.
 
 Repository tests (`test/data/`, in-memory Firestore via `fake_cloud_firestore`):
 
