@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/errors/app_exception.dart';
+import '../../../core/errors/error_reporter.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/validators.dart';
@@ -42,7 +43,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     _error = null;
     try {
       await action();
-    } catch (e) {
+    } catch (e, st) {
+      // The screen shows a friendly message; the log keeps the real cause
+      // (e.g. Google's ApiException 10 when the app's SHA-1 is not registered).
+      reportError(e, st, reason: 'sign_in');
       if (mounted) {
         setState(() => _error = authErrorMessage(e, s));
       }
