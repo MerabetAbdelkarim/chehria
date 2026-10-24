@@ -5,6 +5,7 @@ import '../../../core/errors/app_exception.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/ui_providers.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/widgets/app_logo.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/confirm_dialog.dart';
 import 'sign_up_screen.dart';
@@ -111,11 +112,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(
-                      Icons.account_balance_wallet_rounded,
-                      size: 64,
-                      color: theme.colorScheme.primary,
-                    ),
+                    const Center(child: AppLogo(size: 76)),
                     const SizedBox(height: 12),
                     Text(
                       s.appName,

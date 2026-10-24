@@ -128,11 +128,26 @@ flutter pub get
 flutter run
 ```
 
+### App icon & logo
+
+The logo is a wallet with a gold clasp on the app green. Its sources are the
+SVGs in `assets/brand/`; the in-app version is drawn by
+`core/widgets/app_logo.dart` with the same geometry. After changing the art,
+export the SVGs to the PNGs next to them (1024×1024) and regenerate:
+
+```bash
+dart run flutter_launcher_icons
+git checkout -- ios/Runner.xcodeproj/project.pbxproj   # the tool corrupts one Xcode setting
+```
+
+The adaptive foreground is drawn larger than the safe zone on purpose: the
+tool adds a 16 % inset around it.
+
 ## 4. Tests
 
 ```bash
 flutter analyze   # no issues
-flutter test      # 150 tests
+flutter test      # 151 tests
 ```
 
 CI (`.github/workflows/ci.yml`) runs format, analyze, the Flutter tests and
@@ -220,6 +235,7 @@ test/
 ├── pdf_export_test.dart
 └── data/                         # repositories on fake Firestore
 assets/fonts/                     # Amiri (Arabic PDF) + OFL licence
+assets/brand/                     # logo sources (SVG) and the PNGs the app icons are made from
 firestore-tests/                  # security-rules tests (emulator)
 .github/workflows/ci.yml
 firestore.rules

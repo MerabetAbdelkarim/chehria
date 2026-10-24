@@ -51,6 +51,20 @@ dev_dependencies:
   # In-memory Firestore for repository tests
   fake_cloud_firestore: ^3.1.0
 
+  # App icons generated from assets/brand/ (dart run flutter_launcher_icons)
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path_android: assets/brand/icon.png
+  image_path_ios: assets/brand/icon-ios.png
+  min_sdk_android: 24
+  adaptive_icon_background: "#00873D"
+  adaptive_icon_foreground: assets/brand/adaptive-foreground.png
+  adaptive_icon_monochrome: assets/brand/adaptive-monochrome.png
+
 flutter:
   uses-material-design: true
 
