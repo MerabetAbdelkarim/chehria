@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصاريفي – تطبيق إدارة المصاريف في الجزائر</title>
+<meta name="description" content="مصاريفي: تطبيق أندرويد مجاني يحسب لك كل يوم كم يمكنك أن تصرف حتى يوم الراتب، بالدينار الجزائري وبالعربية. الحسابات، الميزانيات، الديون، الدارت والمواسم.">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1813" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='23' fill='%2300873d'/%3E%3Cpath d='M24 34 L64 22 a5 5 0 0 1 6 4 L72 34 Z' fill='%23ffffff' fill-opacity='.55'/%3E%3Crect x='20' y='32' width='60' height='44' rx='9' fill='%23ffffff'/%3E%3Cpath d='M58 46 h22 v16 h-22 a8 8 0 0 1 0 -16 Z' fill='%230b5d33'/%3E%3Ccircle cx='60' cy='54' r='4' fill='%23e8b23a'/%3E%3C/svg%3E">
+
+<!-- Open Graph. Replace "https://example.com/" with your real domain (og:image must be an absolute URL). -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_DZ">
+<meta property="og:locale:alternate" content="fr_DZ">
+<meta property="og:title" content="مصاريفي – تطبيق إدارة المصاريف في الجزائر">
+<meta property="og:description" content="اعرف كم يمكنك أن تصرف اليوم… حتى يوم الراتب. تطبيق أندرويد مجاني، بالدينار الجزائري وبالعربية.">
+<meta property="og:url" content="https://example.com/">
+<meta property="og:image" content="https://example.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="شعار مصاريفي على خلفية خضراء">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://example.com/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ============ COLOURS ============
+   White base, green used sparingly for actions and accents. */
+:root{
+  --green:#00873D; --green-deep:#0B5D33; --gold:#E8B23A;
+  --bg:#FFFFFF;
+  --surface:#F6F9F7;     /* very light green-grey: alternate sections */
+  --card:#FFFFFF;
+  --border:#E5ECE8;
+  --border-strong:#D2DCD6;
+  --text:#16211B;
+  --muted:#5D6B63;
+  --green-text:#00733A;  /* green for text (AA on white) */
+  --green-soft:#EAF5EE;  /* light green tint */
+  --radius:16px; --header-h:68px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1412; --surface:#151C18; --card:#18201C; --border:#25302A; --border-strong:#34413A;
+    --text:#EDF2EF; --muted:#A3B0A9; --green-text:#4FC984; --green-soft:#16281E;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1412; --surface:#151C18; --card:#18201C; --border:#25302A; --border-strong:#34413A;
+  --text:#EDF2EF; --muted:#A3B0A9; --green-text:#4FC984; --green-soft:#16281E;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Cairo","Inter",system-ui,sans-serif;font-size:17px;line-height:1.75;overflow-x:hidden}
+html[lang="fr"] body{font-family:"Inter","Cairo",system-ui,sans-serif;font-size:16px;line-height:1.6}
+img,svg{display:block}
+a{color:inherit}
+h1,h2,h3{line-height:1.3;margin:0}
+p{margin:0}
+.icon{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip{position:absolute;inset-inline-start:16px;top:-60px;background:var(--green);color:#fff;padding:10px 16px;border-radius:10px;z-index:100;text-decoration:none}
+.skip:focus{top:10px}
+:focus-visible{outline:3px solid var(--green);outline-offset:3px;border-radius:6px}
+
+.container{width:100%;max-width:1120px;margin-inline:auto;padding-inline:16px}
+@media (min-width:640px){.container{padding-inline:28px}}
+section{scroll-margin-top:calc(var(--header-h) + 8px)}
+.section{padding-block:72px}
+@media (min-width:900px){.section{padding-block:96px}}
+.section-alt{background:var(--surface)}
+
+.head{max-width:620px;margin:0 auto 44px;text-align:center}
+.kicker{font-size:.9rem;font-weight:700;color:var(--green-text);margin-bottom:8px}
+.head h2{font-size:clamp(1.6rem,4.4vw,2.3rem);font-weight:800}
+html[lang="fr"] .head h2{letter-spacing:-.02em}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:inherit;font-weight:700;text-decoration:none;border:0;cursor:pointer;border-radius:12px;transition:background .15s}
+.btn-primary{background:var(--green);color:#fff;padding:14px 26px;font-size:1.05rem}
+.btn-primary:hover{background:var(--green-deep)}
+.btn-primary .icon{width:24px;height:24px}
+.btn-sm{padding:8px 14px;font-size:.9rem;border-radius:10px}
+.btn-sm .icon{width:19px;height:19px}
+.version-line{font-size:.85rem;color:var(--muted);margin-top:12px}
+.ios-note{display:inline-flex;align-items:center;gap:10px;background:var(--green-soft);color:var(--text);padding:13px 18px;border-radius:12px;font-weight:600}
+.ios-note .icon{color:var(--green-text)}
+html.is-ios .version-line{display:none}
+html.is-ios .hide-ios{display:none!important}
+
+/* Header */
+.site-header{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border)}
+.header-inner{height:var(--header-h);display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1.2rem;margin-inline-end:auto}
+.brand svg{width:36px;height:36px}
+.nav{display:none;gap:2px}
+.nav a{text-decoration:none;color:var(--muted);font-weight:600;padding:8px 12px;font-size:.95rem;border-radius:8px}
+.nav a:hover{color:var(--text)}
+.seg{display:flex;border:1px solid var(--border);border-radius:10px;padding:2px}
+.seg button{font:inherit;font-size:.82rem;font-weight:700;border:0;background:transparent;color:var(--muted);padding:4px 10px;border-radius:7px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--green-soft);color:var(--green-text)}
+.seg button[lang="ar"]{font-family:"Cairo",sans-serif}
+.seg button[lang="fr"]{font-family:"Inter",sans-serif}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer}
+.icon-btn:hover{background:var(--surface)}
+.icon-btn .icon{width:20px;height:20px}
+.theme-btn .i-sun{display:none}
+html.dark .theme-btn .i-sun{display:block}
+html.dark .theme-btn .i-moon{display:none}
+.menu-btn{display:grid}
+.mobile-nav{display:none;border-top:1px solid var(--border);padding:4px 16px 12px;background:var(--bg)}
+.mobile-nav.open{display:grid}
+.mobile-nav a{text-decoration:none;font-weight:600;padding:13px 4px;border-bottom:1px solid var(--border)}
+.m-lang{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 4px 4px;font-weight:600}
+.m-lang .seg button{padding:6px 14px;font-size:.9rem}
+.header-inner > .seg{display:none}
+.header-dl .lbl-long{display:none}
+@media (max-width:560px){.header-dl{display:none}.header-inner{gap:8px}.seg button{padding:4px 8px}}
+@media (max-width:360px){.brand span{display:none}}
+@media (min-width:900px){
+  .nav{display:flex}
+  .header-inner > .seg{display:flex}
+  .menu-btn,.mobile-nav,.mobile-nav.open{display:none}
+  .header-dl .lbl-long{display:inline}
+  .header-dl .lbl-short{display:none}
+}
+
+/* Hero */
+.hero{padding-block:48px 64px}
+.hero-grid{display:grid;gap:48px;align-items:center}
+.hero-copy{text-align:center}
+.hero h1{font-size:clamp(2rem,6.4vw,3.2rem);font-weight:800;line-height:1.25}
+html[lang="fr"] .hero h1{letter-spacing:-.03em;line-height:1.12}
+.hero h1 .hl{color:var(--green-text)}
+.hero .lead{font-size:clamp(1.05rem,2.6vw,1.18rem);color:var(--muted);margin:18px auto 30px;max-width:520px}
+.hero-cta{display:flex;flex-direction:column;align-items:center}
+.howto-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-weight:700;color:var(--green-text);text-decoration:none}
+.howto-link:hover{text-decoration:underline;text-underline-offset:5px}
+.howto-link .icon{width:18px;height:18px}
+@media (max-width:519px){.hero-cta .btn-primary{width:100%}}
+@media (min-width:900px){
+  .hero{padding-block:72px 88px}
+  .hero-grid{grid-template-columns:1.1fr .9fr}
+  .hero-copy{text-align:start}
+  .hero .lead{margin-inline:0}
+  .hero-cta{align-items:flex-start}
+}
+
+/* Soft circle behind the phone */
+.stage{position:relative;display:flex;justify-content:center;padding-block:10px}
+.arch{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(400px,100%);aspect-ratio:1;border-radius:50%;background:var(--green-soft)}
+
+/* Phone mockup (fixed colours: shows the app in light mode) */
+.phone{position:relative;z-index:1;width:272px;border-radius:42px;background:#16211B;padding:9px;box-shadow:0 24px 48px rgba(16,40,28,.16)}
+.phone::before{content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:78px;height:21px;background:#16211B;border-radius:12px;z-index:2}
+.screen{background:#F7F9F8;border-radius:34px;overflow:hidden;color:#16211B;display:flex;flex-direction:column;height:540px;font-size:13px;line-height:1.5}
+.sb{display:flex;justify-content:space-between;align-items:center;padding:13px 22px 6px;font-weight:700;font-size:12px;direction:ltr;font-family:"Inter",sans-serif}
+.sb .bars{display:flex;gap:4px;align-items:center}
+.sb .bars i{display:block;width:14px;height:8px;border:1.5px solid #16211B;border-radius:2px}
+.app-top{display:flex;align-items:center;justify-content:space-between;padding:10px 16px}
+.app-top .who{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}
+.app-top .who svg{width:28px;height:28px}
+.app-top .bell{width:32px;height:32px;border-radius:50%;background:#fff;border:1px solid #E5ECE8;display:grid;place-items:center}
+.app-top .bell .icon{width:16px;height:16px;color:#5D6B63}
+.today-card{margin:4px 12px 0;border-radius:20px;padding:16px;color:#fff;background:#00873D}
+.today-card .lbl{font-size:13px;opacity:.9;font-weight:600}
+.today-card .amt{font-size:32px;font-weight:800;line-height:1.2;margin-top:2px;font-family:"Inter","Cairo",sans-serif;letter-spacing:-.02em}
+.today-card .amt small{font-size:16px;font-weight:700;font-family:"Cairo",sans-serif;letter-spacing:0}
+html[lang="fr"] .today-card .amt small{font-family:"Inter",sans-serif}
+.today-card .days{margin-top:8px;font-size:12px;font-weight:600;opacity:.92}
+.today-card .bar{height:5px;background:rgba(255,255,255,.25);border-radius:5px;margin-top:8px;overflow:hidden}
+.today-card .bar span{display:block;height:100%;width:60%;background:#fff;border-radius:5px}
+.list-head{display:flex;justify-content:space-between;align-items:baseline;padding:14px 16px 4px}
+.list-head b{font-size:14px;font-weight:800}
+.list-head span{font-size:12px;color:#5D6B63;font-weight:600}
+.exp{list-style:none;margin:0 12px;padding:2px 12px;background:#fff;border:1px solid #EDF1EE;border-radius:16px}
+.exp li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #EFF3F0}
+.exp li:last-child{border-bottom:0}
+.exp .ic{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;flex:none;background:#EAF5EE!important;color:#00733A!important}
+.exp .ic .icon{width:17px;height:17px}
+.exp .n{flex:1;font-weight:700}
+.exp .n small{display:block;font-weight:500;color:#6B7871;font-size:11px}
+.exp .v{font-weight:800;white-space:nowrap}
+.tabbar{margin-top:auto;display:flex;justify-content:space-around;align-items:center;background:#fff;padding:10px 8px 14px;border-top:1px solid #EDF1EE}
+.tabbar .t{width:22px;height:22px;color:#A2AEA7}
+.tabbar .t.on{color:#00873D}
+.tabbar .fab{width:44px;height:44px;border-radius:50%;background:#00873D;color:#fff;display:grid;place-items:center;margin-top:-24px}
+.tabbar .fab .icon{width:22px;height:22px;stroke-width:2.4}
+
+/* Facts strip */
+.facts{border-block:1px solid var(--border)}
+.facts ul{list-style:none;margin:0;padding:16px 0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 32px;font-weight:600;color:var(--muted)}
+.facts li{display:flex;align-items:center;gap:8px}
+.star8{width:8px;height:8px;color:var(--green)}
+
+/* Why */
+.why{display:grid;gap:16px}
+@media (min-width:800px){.why{grid-template-columns:repeat(3,1fr);gap:20px}}
+.why article{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px}
+.why .num{font-family:"Inter",sans-serif;font-weight:700;font-size:.9rem;color:var(--green-text)}
+.why h3{font-size:1.2rem;font-weight:800;margin:6px 0 6px}
+.why p{color:var(--muted)}
+
+/* Features */
+.feat-top{display:grid;gap:16px;background:var(--green-soft);border-radius:20px;padding:28px;margin-bottom:8px}
+.feat-top .ic{width:44px;height:44px;border-radius:12px;background:var(--green);color:#fff;display:grid;place-items:center;margin-bottom:12px}
+.feat-top h3{font-size:1.35rem;font-weight:800}
+.feat-top p{color:var(--muted);margin-top:4px}
+.feat-top .big{align-self:center;font-family:"Inter","Cairo",sans-serif;font-weight:800;font-size:clamp(2.4rem,8vw,3.6rem);letter-spacing:-.03em;line-height:1;color:var(--green-text)}
+.feat-top .big small{font-family:"Cairo",sans-serif;font-size:.45em;letter-spacing:0}
+html[lang="fr"] .feat-top .big small{font-family:"Inter",sans-serif}
+@media (min-width:760px){.feat-top{grid-template-columns:1fr auto;padding:32px 36px}}
+.flist{display:grid;grid-template-columns:1fr;column-gap:40px}
+@media (min-width:640px){.flist{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:980px){.flist{grid-template-columns:repeat(3,1fr)}}
+.fitem{display:flex;gap:14px;padding:22px 0;border-bottom:1px solid var(--border)}
+.fitem .icon{width:26px;height:26px;color:var(--green-text);margin-top:3px}
+.fitem h3{font-size:1.05rem;font-weight:800;margin-bottom:2px}
+.fitem p{color:var(--muted);font-size:.95rem}
+
+/* How it works */
+.steps{display:grid;gap:16px;list-style:none;padding:0;margin:0}
+@media (min-width:800px){.steps{grid-template-columns:repeat(3,1fr);gap:20px}}
+.step{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.step .num{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#fff;font-weight:700;font-size:1.05rem;font-family:"Inter",sans-serif}
+.step p{font-weight:600;padding-top:6px}
+
+/* Install */
+.install-steps{display:grid;gap:16px;list-style:none;padding:0;margin:0}
+@media (min-width:600px){.install-steps{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.install-steps{grid-template-columns:repeat(4,1fr)}}
+.istep{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 12px 20px;display:flex;flex-direction:column;gap:16px}
+.istep .art{height:140px;border-radius:10px;background:var(--surface);display:grid;place-items:center;position:relative}
+.istep .art svg{width:112px;height:112px}
+.istep .n{position:absolute;top:10px;inset-inline-start:10px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem;font-family:"Inter",sans-serif}
+.istep p{font-weight:600;padding-inline:8px}
+.istep p b{color:var(--green-text)}
+.info-box{display:flex;gap:12px;align-items:flex-start;margin-top:24px;background:var(--green-soft);border-radius:12px;padding:16px 20px}
+.info-box .icon{color:var(--green-text);margin-top:3px}
+.sha{margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+.sha h3{font-size:1rem;font-weight:800;margin-bottom:10px}
+.sha-row{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.sha code{flex:1 1 260px;min-width:0;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:.85rem;direction:ltr;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;word-break:break-all}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border-strong);padding:10px 16px;font-size:.92rem}
+.btn-ghost:hover{border-color:var(--green)}
+.btn-ghost .icon{width:18px;height:18px}
+
+/* Privacy strip: the one green band */
+.band{background:var(--green);color:#fff}
+.privacy{padding-block:52px}
+.privacy-inner{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;max-width:860px;margin-inline:auto}
+.privacy .shield{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;flex:none}
+.privacy .shield .icon{width:26px;height:26px;color:#fff}
+.privacy p{font-size:clamp(1.05rem,2.6vw,1.2rem);font-weight:500;line-height:1.85}
+.privacy p b{font-weight:800}
+@media (min-width:760px){.privacy-inner{flex-direction:row;text-align:start;gap:24px}}
+
+/* FAQ */
+.faq-wrap{max-width:780px}
+.faq{border-top:1px solid var(--border)}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-item h3{margin:0;font-size:inherit}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;font:inherit;font-weight:700;font-size:1.02rem;color:var(--text);background:transparent;border:0;padding:18px 2px;cursor:pointer;text-align:start}
+.faq-q:hover{color:var(--green-text)}
+.faq-q .pm{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--green-text);background:var(--green-soft);transition:transform .2s}
+.faq-q .pm .icon{width:16px;height:16px;stroke-width:2.2}
+.faq-q[aria-expanded="true"] .pm{transform:rotate(45deg)}
+.faq-a{padding:0 2px 18px;color:var(--muted)}
+
+/* Final CTA */
+.cta{padding-block:0 88px}
+.cta-box{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px 24px;text-align:center}
+.cta-box svg.logo{width:64px;height:64px;margin:0 auto 16px}
+.cta-box h2{font-size:clamp(1.6rem,4.6vw,2.3rem);font-weight:800;margin-bottom:26px}
+.cta-box .hero-cta{align-items:center}
+
+/* Footer */
+.site-footer{border-top:1px solid var(--border);padding-block:32px;font-size:.92rem;color:var(--muted)}
+.footer-inner{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.footer-inner .brand{margin:0;color:var(--text);font-size:1.05rem}
+.footer-inner .brand svg{width:30px;height:30px}
+.footer-links{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+.footer-links a{text-decoration:none;font-weight:600}
+.footer-links a:hover{color:var(--green-text)}
+.footer-meta{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+@media (min-width:760px){.footer-inner{flex-direction:row;justify-content:space-between;text-align:start}}
+
+/* Back to top */
+.to-top{position:fixed;bottom:20px;inset-inline-end:16px;z-index:40;width:48px;height:48px;border-radius:50%;border:0;background:var(--green);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.18);opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .2s,transform .2s,visibility .2s,background .15s}
+.to-top.show{opacity:1;visibility:visible;transform:none}
+.to-top:hover{background:var(--green-deep)}
+.to-top .icon{width:22px;height:22px;stroke-width:2.2}
+@media (min-width:900px){.to-top{bottom:28px;inset-inline-end:28px}}
+</style>
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="#00873d"/><path d="M24 34 L64 22 a5 5 0 0 1 6 4 L72 34 Z" fill="#ffffff" fill-opacity=".55"/><rect x="20" y="32" width="60" height="44" rx="9" fill="#ffffff"/><path d="M58 46 h22 v16 h-22 a8 8 0 0 1 0 -16 Z" fill="#0b5d33"/><circle cx="60" cy="54" r="4" fill="#e8b23a"/></symbol>
+    <symbol id="star8" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1l3 6.5 6.5-2-2 6.5L23 12l-3.5 3 2 6.5-6.5-2L12 23l-3-3.5-6.5 2 2-6.5L1 12l3.5-3-2-6.5 6.5 2z"/></symbol>
+    <symbol id="i-android" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.87 3.23A11.4 11.4 0 0 0 12 8.18c-1.75 0-3.4.36-4.9.97L5.22 5.92a.38.38 0 0 0-.66.38L6.4 9.48A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14m0 0l-6-6m6 6l6-6"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.4-7.5 9.5-4.3-1.1-7.5-4.9-7.5-9.5V6L12 3z"/><path d="M8.8 12l2.2 2.2 4.4-4.4"/></symbol>
+    <symbol id="i-today" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.8" fill="currentColor"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><rect x="4" y="8" width="16.5" height="11.5" rx="2.5"/><path d="M20.5 12H17a2 2 0 0 0 0 4h3.5"/></symbol>
+    <symbol id="i-pie" viewBox="0 0 24 24"><path d="M12 3.5v8.5h8.5A8.5 8.5 0 1 1 12 3.5z"/><path d="M15 3.8A8.5 8.5 0 0 1 20.2 9H15V3.8z"/></symbol>
+    <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4L3.5 7.5 7 11M3.5 7.5H17M17 13l3.5 3.5L17 20M20.5 16.5H7"/></symbol>
+    <symbol id="i-cycle" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><path d="M9.8 5.6A7.5 7.5 0 0 0 5.1 13M7.4 18.6a7.5 7.5 0 0 0 9.2 0M18.9 13a7.5 7.5 0 0 0-4.7-7.4"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M17 3l3 3-3 3M20 6H8a4 4 0 0 0-4 4v1M7 21l-3-3 3-3M4 18h12a4 4 0 0 0 4-4v-1"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></symbol>
+    <symbol id="i-crescent" viewBox="0 0 24 24"><path d="M15.5 3.5a8.5 8.5 0 1 0 5 15.4A7 7 0 0 1 15.5 3.5z"/><path d="M18 7l.6 1.4L20 9l-1.4.6L18 11l-.6-1.4L16 9l1.4-.6L18 7z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 4v16h16"/><rect x="7.5" y="11" width="3" height="6" rx="1"/><rect x="12.5" y="7" width="3" height="10" rx="1"/><rect x="17.5" y="13" width="2.5" height="4" rx="1"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.5 5.3 3.5 8.5s-1.1 6.1-3.5 8.5c-2.4-2.4-3.5-5.3-3.5-8.5S9.6 5.9 12 3.5z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16zM10 20.5a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="i-cup" viewBox="0 0 24 24"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9zM16 10.5h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v2.5M12 3.5v2.5"/></symbol>
+    <symbol id="i-bus" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="14" rx="3"/><path d="M5 11h14M8 17.5V20M16 17.5V20"/><circle cx="8.5" cy="14.3" r=".8" fill="currentColor"/><circle cx="15.5" cy="14.3" r=".8" fill="currentColor"/></symbol>
+    <symbol id="i-basket" viewBox="0 0 24 24"><path d="M3.5 10h17l-1.6 8.2a2 2 0 0 1-2 1.8H7.1a2 2 0 0 1-2-1.8L3.5 10zM8 10l3-6M16 10l-3-6M9.5 14v2.5M14.5 14v2.5"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8.5a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1V11z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5m0 0l-6 6m6-6l6 6"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#main" data-i18n="skip">انتقل إلى المحتوى</a>
+
+<!-- 1. Header -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="#top" aria-label="مصاريفي" data-i18n-aria="brand">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg>
+      <span data-i18n="brand">مصاريفي</span>
+    </a>
+    <nav class="nav" aria-label="القائمة الرئيسية" data-i18n-aria="navLabel">
+      <a href="#features" data-i18n="navFeatures">المميزات</a>
+      <a href="#install" data-i18n="navInstall">طريقة التثبيت</a>
+      <a href="#faq" data-i18n="navFaq">الأسئلة الشائعة</a>
+    </nav>
+    <div class="seg" role="group" aria-label="اللغة" data-i18n-aria="langLabel">
+      <button type="button" lang="ar" data-lang="ar" aria-pressed="true">العربية</button>
+      <button type="button" lang="fr" data-lang="fr" aria-pressed="false">Français</button>
+    </div>
+    <button type="button" class="icon-btn theme-btn" id="themeBtn" aria-label="تبديل الوضع الداكن" data-i18n-aria="themeLabel">
+      <svg class="icon i-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+      <svg class="icon i-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+    </button>
+    <a class="btn btn-primary btn-sm header-dl hide-ios js-dl" href="#">
+      <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>
+      <span class="lbl-long" data-i18n="headerDl">تحميل APK</span>
+      <span class="lbl-short">APK</span>
+    </a>
+    <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobileNav" aria-label="القائمة" data-i18n-aria="menuLabel">
+      <svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="القائمة الرئيسية" data-i18n-aria="navLabel">
+    <a href="#features" data-i18n="navFeatures">المميزات</a>
+    <a href="#install" data-i18n="navInstall">طريقة التثبيت</a>
+    <a href="#faq" data-i18n="navFaq">الأسئلة الشائعة</a>
+    <div class="m-lang">
+      <span data-i18n="langLabel">اللغة</span>
+      <div class="seg" role="group" aria-label="اللغة" data-i18n-aria="langLabel">
+        <button type="button" lang="ar" data-lang="ar" aria-pressed="true">العربية</button>
+        <button type="button" lang="fr" data-lang="fr" aria-pressed="false">Français</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+
+<!-- 2. Hero -->
+<section class="hero" id="top">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="kicker" data-i18n="heroKicker">لأصحاب الرواتب في الجزائر</p>
+      <h1 data-i18n="heroTitle">اعرف كم يمكنك أن تصرف اليوم… <span class="hl">حتى يوم الراتب</span></h1>
+      <p class="lead" data-i18n="heroSub">مصاريفي يحسب لك كل يوم المبلغ المتبقي لك حتى الراتب القادم، بالدينار الجزائري، وبالعربية.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary js-dl" href="#">
+          <svg class="icon" aria-hidden="true"><use href="#i-android"/></svg>
+          <span data-i18n="dlBtn">تحميل التطبيق لأندرويد (APK)</span>
+        </a>
+        <p class="version-line js-version-line"></p>
+        <a class="howto-link" href="#install">
+          <span data-i18n="howto">كيف أثبّت التطبيق؟</span>
+          <svg class="icon" aria-hidden="true"><use href="#i-arrow-down"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="arch" aria-hidden="true"></div>
+      <div class="phone" role="img" aria-label="لقطة من التطبيق: يمكنك صرف اليوم 1,850 دج، باقي 12 يوماً على الراتب، ومصاريف اليوم: قهوة 80 دج، نقل 50 دج، خضر 450 دج." data-i18n-aria="phoneAlt">
+        <div class="screen" aria-hidden="true">
+          <div class="sb"><span>9:41</span><span class="bars"><svg class="icon" style="width:14px;height:14px" viewBox="0 0 24 24"><path d="M2 20h3v-4H2zM7 20h3v-8H7zM12 20h3V8h-3zM17 20h3V4h-3z" fill="#13261C" stroke="none"/></svg><i></i></span></div>
+          <div class="app-top">
+            <div class="who"><svg viewBox="0 0 100 100"><use href="#logo"/></svg><span data-i18n="brand">مصاريفي</span></div>
+            <div class="bell"><svg class="icon"><use href="#i-bell"/></svg></div>
+          </div>
+          <div class="today-card">
+            <div class="lbl" data-i18n="mLabel">يمكنك صرف اليوم</div>
+            <div class="amt" data-i18n="mAmount">1,850 <small>دج</small></div>
+            <div class="days" data-i18n="mDays">باقي 12 يوماً على الراتب</div>
+            <div class="bar"><span></span></div>
+          </div>
+          <div class="list-head"><b data-i18n="mToday">مصاريف اليوم</b><span data-i18n="mTotal">المجموع: 580 دج</span></div>
+          <ul class="exp">
+            <li><span class="ic" style="background:#FBEFD2;color:#8A5F00"><svg class="icon"><use href="#i-cup"/></svg></span><span class="n" data-i18n="mCoffee">قهوة<small>نقداً</small></span><span class="v" data-i18n="m80">80 دج</span></li>
+            <li><span class="ic" style="background:#F6E3DA;color:#A4462C"><svg class="icon"><use href="#i-bus"/></svg></span><span class="n" data-i18n="mTransport">نقل<small>نقداً</small></span><span class="v" data-i18n="m50">50 دج</span></li>
+            <li><span class="ic" style="background:#E2F0E6;color:#00733A"><svg class="icon"><use href="#i-basket"/></svg></span><span class="n" data-i18n="mVeg">خضر<small>CCP</small></span><span class="v" data-i18n="m450">450 دج</span></li>
+          </ul>
+          <div class="tabbar">
+            <svg class="icon t on"><use href="#i-home"/></svg>
+            <svg class="icon t"><use href="#i-pie"/></svg>
+            <span class="fab"><svg class="icon"><use href="#i-plus"/></svg></span>
+            <svg class="icon t"><use href="#i-wallet"/></svg>
+            <svg class="icon t"><use href="#i-chart"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="facts">
+  <ul class="container">
+    <li><svg class="star8" aria-hidden="true"><use href="#star8"/></svg><span data-i18n="fact1">مجاني</span></li>
+    <li><svg class="star8" aria-hidden="true"><use href="#star8"/></svg><span data-i18n="fact2">بالعربية والفرنسية</span></li>
+    <li><svg class="star8" aria-hidden="true"><use href="#star8"/></svg><span data-i18n="fact3">بالدينار الجزائري</span></li>
+  </ul>
+</div>
+
+<!-- 3. Why -->
+<section class="section section-alt" id="why">
+  <div class="container">
+    <div class="head">
+      <h2 data-i18n="whyTitle">لماذا مصاريفي؟</h2>
+    </div>
+    <div class="why">
+      <article>
+        <span class="num">01</span>
+        <h3 data-i18n="why1t">مصمم للجزائر</h3>
+        <p data-i18n="why1d">الدينار، الحساب البريدي CCP، "المليون"، رمضان والدخول المدرسي.</p>
+      </article>
+      <article>
+        <span class="num">02</span>
+        <h3 data-i18n="why2t">بسيط وسريع</h3>
+        <p data-i18n="why2d">سجّل مصروفك في ثوانٍ.</p>
+      </article>
+      <article>
+        <span class="num">03</span>
+        <h3 data-i18n="why3t">بياناتك لك وحدك</h3>
+        <p data-i18n="why3d">محفوظة في حسابك، تصدّرها أو تحذفها متى شئت.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Features -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="head">
+      <p class="kicker" data-i18n="navFeatures">المميزات</p>
+      <h2 data-i18n="featTitle">كل ما تحتاجه لتنظيم مصاريفك</h2>
+    </div>
+    <div class="feat-top">
+      <div>
+        <div class="ic"><svg class="icon" aria-hidden="true"><use href="#i-today"/></svg></div>
+        <h3 data-i18n="f1t">مصروف اليوم</h3>
+        <p data-i18n="f1d">كم يمكنك أن تصرف اليوم حتى يوم الراتب.</p>
+      </div>
+      <div class="big" aria-hidden="true" data-i18n="mAmount">1,850 <small>دج</small></div>
+    </div>
+    <div class="flist">
+      <article class="fitem"><svg class="icon" aria-hidden="true"><use href="#i-wallet"/></svg><div><h3 data-i18n="f2t">الحسابات</h3><p data-i18n="f2d">نقداً، CCP، البطاقة… مع التحويل بينها.</p></div></article>
+      <article class="fitem"><svg class="icon" aria-hidden="true"><use href="#i-pie"/></svg><div><h3 data-i18n="f3t">الميزانيات</h3><p data-i18n="f3d">حدّ شهري لكل فئة، مع تنبيه عند 80% و100%.</p></div></article>
+      <article class="fitem"><svg class="icon" aria-hidden="true"><use href="#i-swap"/></svg><div><h3 data-i18n="f4t">الديون</h3><p data-i18n="f4d">ما عليك وما لك، مع الدفعات الجزئية وتذكير بموعد السداد.</p></div></article>
+      <article class="fitem"><svg class="icon" aria-hidden="true"><use href="#i-cycle"/></svg><div><h3 data-i18n="f5t">الدارت (الدورة)</h3><p data-i18n="f5d">نظّم دورة التوفير مع العائلة أو الزملاء: من دفع، ومن دوره ليقبض.</p></div></article>
+      <article class="fitem"><svg class="icon" aria-hidden="true"><use href="#i-repeat"/></svg><div><h3 data-i18n="f6t">الاشتراكات</h3><p data-i18n="f6d">أسبوعية، شهرية أو سنوية، مع تذكير قبل الموعد.</p></div></article>
+      <article class="fitem"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg><div><h3 data-i18n="f7t">الأهداف</h3><p data-i18n="f7d">ادّخر لهدف معيّن وتابع تقدّمك.</p></div></article>
+      <article class="fitem"><svg class="icon" aria-hidden="true"><use href="#i-crescent"/></svg><div><h3 data-i18n="f8t">المواسم</h3><p data-i18n="f8d">استعد لرمضان، العيد، الدخول المدرسي والعطلة الصيفية، مع المبلغ الذي تدّخره كل شهر.</p></div></article>
+      <article class="fitem"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg><div><h3 data-i18n="f9t">التقارير</h3><p data-i18n="f9d">تقرير شهري حسب الفئات، وتصدير PDF وExcel.</p></div></article>
+      <article class="fitem"><svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg><div><h3 data-i18n="f10t">عربي وفرنسي</h3><p data-i18n="f10d">وضع داكن، وعرض المبالغ بالدينار أو بالمليون.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<!-- 5. How it works -->
+<section class="section section-alt" id="how">
+  <div class="container">
+    <div class="head">
+      <h2 data-i18n="howTitle">كيف يعمل؟</h2>
+    </div>
+    <ol class="steps">
+      <li class="step"><span class="num">1</span><p data-i18n="how1">أنشئ حسابك بالبريد أو بحساب Google.</p></li>
+      <li class="step"><span class="num">2</span><p data-i18n="how2">أدخل راتبك ويوم استلامه.</p></li>
+      <li class="step"><span class="num">3</span><p data-i18n="how3">سجّل مصاريفك… ومصاريفي يخبرك كل يوم بما تبقّى لك.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6. Install -->
+<section class="section" id="install">
+  <div class="container">
+    <div class="head">
+      <p class="kicker" data-i18n="installEyebrow">4 خطوات بسيطة</p>
+      <h2 data-i18n="installTitle">طريقة التثبيت</h2>
+    </div>
+    <ol class="install-steps">
+      <li class="istep">
+        <div class="art" aria-hidden="true"><span class="n">1</span>
+          <svg viewBox="0 0 120 120"><rect x="34" y="8" width="52" height="104" rx="10" fill="var(--card)" stroke="var(--border-strong)" stroke-width="2"/><circle cx="60" cy="48" r="18" fill="#00873D"/><path d="M60 39v15m0 0l-6-6m6 6l6-6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="42" y="80" width="36" height="6" rx="3" fill="var(--border)"/><rect x="42" y="80" width="24" height="6" rx="3" fill="#E8B23A"/></svg>
+        </div>
+        <p data-i18n="inst1">اضغط على <b>"تحميل التطبيق"</b> وانتظر حتى ينتهي التحميل.</p>
+      </li>
+      <li class="istep">
+        <div class="art" aria-hidden="true"><span class="n">2</span>
+          <svg viewBox="0 0 120 120"><rect x="34" y="8" width="52" height="104" rx="10" fill="var(--card)" stroke="var(--border-strong)" stroke-width="2"/><rect x="38" y="20" width="44" height="22" rx="6" fill="#E2F0E6" stroke="#00873D" stroke-width="1.5"/><use href="#logo" x="41" y="24" width="14" height="14"/><rect x="58" y="26" width="20" height="3.5" rx="1.75" fill="#0B5D33"/><rect x="58" y="32" width="14" height="3" rx="1.5" fill="#7FB89A"/><path d="M48 62h10l4 4h10v26H48z" fill="#E8B23A" opacity=".9"/><rect x="48" y="70" width="24" height="22" rx="2" fill="#F2C55E"/></svg>
+        </div>
+        <p data-i18n="inst2">افتح الملف من الإشعارات أو من مجلد <b>"التنزيلات"</b>.</p>
+      </li>
+      <li class="istep">
+        <div class="art" aria-hidden="true"><span class="n">3</span>
+          <svg viewBox="0 0 120 120"><rect x="34" y="8" width="52" height="104" rx="10" fill="var(--card)" stroke="var(--border-strong)" stroke-width="2"/><rect x="40" y="26" width="40" height="4" rx="2" fill="var(--muted)" opacity=".5"/><rect x="40" y="34" width="28" height="4" rx="2" fill="var(--muted)" opacity=".35"/><rect x="40" y="54" width="40" height="22" rx="6" fill="#E2F0E6"/><rect x="44" y="62" width="14" height="4" rx="2" fill="#0B5D33"/><rect x="62" y="59" width="16" height="10" rx="5" fill="#00873D"/><circle cx="73" cy="64" r="3.6" fill="#fff"/><circle cx="60" cy="96" r="7" fill="none" stroke="var(--muted)" stroke-width="2" opacity=".6"/></svg>
+        </div>
+        <p data-i18n="inst3">إذا ظهرت رسالة <b>"تثبيت تطبيقات غير معروفة"</b>، اضغط <b>"الإعدادات"</b> ثم فعّل <b>"السماح من هذا المصدر"</b>، وارجع.</p>
+      </li>
+      <li class="istep">
+        <div class="art" aria-hidden="true"><span class="n">4</span>
+          <svg viewBox="0 0 120 120"><rect x="34" y="8" width="52" height="104" rx="10" fill="var(--card)" stroke="var(--border-strong)" stroke-width="2"/><use href="#logo" x="48" y="24" width="24" height="24"/><rect x="44" y="56" width="32" height="4" rx="2" fill="var(--muted)" opacity=".45"/><rect x="40" y="80" width="40" height="14" rx="7" fill="#00873D"/><path d="M53 87l4 4 9-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <p data-i18n="inst4">اضغط <b>"تثبيت"</b>، ثم <b>"فتح"</b>.</p>
+      </li>
+    </ol>
+
+    <div class="info-box" role="note">
+      <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+      <p data-i18n="playProtect">قد يُظهر Play Protect تحذيراً لأن التطبيق غير موجود على متجر Google Play. هذا طبيعي. اضغط <b>"تثبيت على أي حال"</b>.</p>
+    </div>
+
+    <div class="sha" id="shaBox" hidden>
+      <h3 data-i18n="shaTitle">بصمة الملف (SHA-256)</h3>
+      <div class="sha-row">
+        <code id="shaValue"></code>
+        <button type="button" class="btn btn-ghost" id="copyBtn">
+          <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>
+          <span id="copyLbl">نسخ</span>
+        </button>
+      </div>
+      <span class="sr-only" aria-live="polite" id="copyStatus"></span>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Privacy -->
+<section class="privacy band" aria-label="الخصوصية" data-i18n-aria="privacyLabel">
+  <div class="container">
+    <div class="privacy-inner">
+      <div class="shield" aria-hidden="true"><svg class="icon"><use href="#i-shield"/></svg></div>
+      <p data-i18n="privacy"><b>خصوصيتك أولاً:</b> كل مستخدم لا يرى إلا بياناته، يمكنك تصدير نسخة كاملة من بياناتك، وحذف حسابك وكل بياناتك نهائياً من داخل التطبيق.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8. FAQ -->
+<section class="section" id="faq">
+  <div class="container faq-wrap">
+    <div class="head">
+      <h2 data-i18n="navFaq">الأسئلة الشائعة</h2>
+    </div>
+    <div class="faq" id="faqList">
+      <div class="faq-item"><h3><button type="button" class="faq-q" id="q1" aria-expanded="false" aria-controls="a1"><span data-i18n="q1">هل التطبيق مجاني؟</span><span class="pm" aria-hidden="true"><svg class="icon"><use href="#i-plus"/></svg></span></button></h3><div class="faq-a" id="a1" role="region" aria-labelledby="q1" hidden><p data-i18n="a1">نعم.</p></div></div>
+      <div class="faq-item"><h3><button type="button" class="faq-q" id="q2" aria-expanded="false" aria-controls="a2"><span data-i18n="q2">لماذا ليس على Google Play؟</span><span class="pm" aria-hidden="true"><svg class="icon"><use href="#i-plus"/></svg></span></button></h3><div class="faq-a" id="a2" role="region" aria-labelledby="q2" hidden><p data-i18n="a2">نوزّعه مباشرة من هذا الموقع. حمّله دائماً من هنا فقط، وليس من مواقع أخرى.</p></div></div>
+      <div class="faq-item"><h3><button type="button" class="faq-q" id="q3" aria-expanded="false" aria-controls="a3"><span data-i18n="q3">هل التثبيت آمن؟</span><span class="pm" aria-hidden="true"><svg class="icon"><use href="#i-plus"/></svg></span></button></h3><div class="faq-a" id="a3" role="region" aria-labelledby="q3" hidden><p data-i18n="a3">نعم، إذا حمّلت الملف من هذا الموقع. التحذير الذي يظهر عند التثبيت عادي لأي تطبيق خارج المتجر.</p></div></div>
+      <div class="faq-item"><h3><button type="button" class="faq-q" id="q4" aria-expanded="false" aria-controls="a4"><span data-i18n="q4">كيف أحصل على التحديثات؟</span><span class="pm" aria-hidden="true"><svg class="icon"><use href="#i-plus"/></svg></span></button></h3><div class="faq-a" id="a4" role="region" aria-labelledby="q4" hidden><p data-i18n="a4">ارجع إلى هذه الصفحة وحمّل الإصدار الجديد، ثم ثبّته فوق القديم. بياناتك تبقى محفوظة في حسابك.</p></div></div>
+      <div class="faq-item"><h3><button type="button" class="faq-q" id="q5" aria-expanded="false" aria-controls="a5"><span data-i18n="q5">هل يعمل بدون إنترنت؟</span><span class="pm" aria-hidden="true"><svg class="icon"><use href="#i-plus"/></svg></span></button></h3><div class="faq-a" id="a5" role="region" aria-labelledby="q5" hidden><p data-i18n="a5">نعم، تُسجَّل العمليات وتُزامن عند عودة الاتصال.</p></div></div>
+      <div class="faq-item"><h3><button type="button" class="faq-q" id="q6" aria-expanded="false" aria-controls="a6"><span data-i18n="q6">هل يصل التطبيق إلى حسابي البنكي أو CCP؟</span><span class="pm" aria-hidden="true"><svg class="icon"><use href="#i-plus"/></svg></span></button></h3><div class="faq-a" id="a6" role="region" aria-labelledby="q6" hidden><p data-i18n="a6">لا، أنت من يسجّل المبالغ بنفسه، ولا نطلب أي معلومات بنكية.</p></div></div>
+      <div class="faq-item"><h3><button type="button" class="faq-q" id="q7" aria-expanded="false" aria-controls="a7"><span data-i18n="q7">ما هي الدارت؟</span><span class="pm" aria-hidden="true"><svg class="icon"><use href="#i-plus"/></svg></span></button></h3><div class="faq-a" id="a7" role="region" aria-labelledby="q7" hidden><p data-i18n="a7">دورة توفير جماعية: يدفع كل عضو مبلغاً ثابتاً كل شهر، ويقبض عضو واحد المبلغ كله في كل دورة.</p></div></div>
+      <div class="faq-item"><h3><button type="button" class="faq-q" id="q8" aria-expanded="false" aria-controls="a8"><span data-i18n="q8">هل يتوفر على iPhone؟</span><span class="pm" aria-hidden="true"><svg class="icon"><use href="#i-plus"/></svg></span></button></h3><div class="faq-a" id="a8" role="region" aria-labelledby="q8" hidden><p data-i18n="a8">حالياً على أندرويد فقط.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. Final CTA -->
+<section class="cta">
+  <div class="container">
+    <div class="cta-box">
+      <svg class="logo" viewBox="0 0 100 100" role="img" aria-label="شعار مصاريفي" data-i18n-aria="logoAlt"><use href="#logo"/></svg>
+      <h2 data-i18n="ctaTitle">ابدأ التحكم في مصاريفك اليوم</h2>
+      <div class="hero-cta">
+        <a class="btn btn-primary js-dl" href="#">
+          <svg class="icon" aria-hidden="true"><use href="#i-android"/></svg>
+          <span data-i18n="dlBtn">تحميل التطبيق لأندرويد (APK)</span>
+        </a>
+        <p class="version-line js-version-line"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- 10. Footer -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg>
+      <span data-i18n="brand">مصاريفي</span>
+    </a>
+    <div class="footer-meta">
+      <span data-i18n="copyright">© 2026 مصاريفي</span>
+      <span aria-hidden="true">·</span>
+      <span class="js-version"></span>
+      <span aria-hidden="true">·</span>
+      <time class="js-date"></time>
+    </div>
+    <nav class="footer-links" aria-label="روابط" data-i18n-aria="footerLabel">
+      <a href="privacy.html" data-i18n="privacyLink">سياسة الخصوصية</a>
+      <a href="#" class="js-contact" data-i18n="contact">اتصل بنا</a>
+    </nav>
+  </div>
+</footer>
+
+<button type="button" class="to-top" id="toTop" aria-label="العودة إلى أعلى الصفحة" data-i18n-aria="toTop" tabindex="-1">
+  <svg class="icon" aria-hidden="true"><use href="#i-arrow-up"/></svg>
+</button>
+
+<script>
+/* =====================================================
+   DOWNLOAD CONFIG: update these values for each release
+   ===================================================== */
+const CONFIG = {
+  // Direct link to the .apk file. Google Drive: share as "Anyone with the link" and use
+  // https://drive.usercontent.google.com/download?id=FILE_ID&export=download&confirm=t
+  // (confirm=t skips Drive's "can't scan for viruses" page for large files).
+  APK_URL: "https://drive.usercontent.google.com/download?id=1CZesOY6Xvjaao9dF4ty6sOctVT4FkG00&export=download&confirm=t",
+  VERSION: "1.0.0",
+  RELEASE_DATE: "2026-10-24",
+  FILE_SIZE: "62 MB",
+  MIN_ANDROID: "Android 7.0+",
+  SHA256: "92102ca8add9e1dd8d927d506b0382b2dba5fc80a64729832285bbb5562e3265", // APK checksum, shown only if not empty
+  CONTACT_EMAIL: "merabet.abdelkarim.dev@gmail.com" // also in privacy.html
+};
+
+/* French copy. The Arabic copy lives in the HTML itself. */
+const FR = {
+  skip: "Aller au contenu",
+  brand: "Masarifi",
+  navLabel: "Menu principal",
+  navFeatures: "Fonctionnalités",
+  navInstall: "Installation",
+  navFaq: "Questions fréquentes",
+  langLabel: "Langue",
+  themeLabel: "Activer ou désactiver le mode sombre",
+  menuLabel: "Menu",
+  headerDl: "Télécharger l'APK",
+  heroKicker: "Pour les salariés en Algérie",
+  heroTitle: "Sachez combien vous pouvez dépenser aujourd'hui… <span class=\"hl\">jusqu'au jour de paie</span>",
+  heroSub: "Masarifi calcule chaque jour ce qu'il vous reste jusqu'au prochain salaire, en dinars algériens.",
+  dlBtn: "Télécharger pour Android (APK)",
+  howto: "Comment installer l'application ?",
+  fact1: "Gratuit",
+  fact2: "En arabe et en français",
+  fact3: "En dinars algériens",
+  phoneAlt: "Aperçu de l'application : vous pouvez dépenser aujourd'hui 1 850 DA, plus que 12 jours avant la paie. Dépenses du jour : café 80 DA, transport 50 DA, légumes 450 DA.",
+  mLabel: "Vous pouvez dépenser aujourd'hui",
+  mAmount: "1 850 <small>DA</small>",
+  mDays: "Plus que 12 jours avant la paie",
+  mToday: "Dépenses du jour",
+  mTotal: "Total : 580 DA",
+  mCoffee: "Café<small>Espèces</small>",
+  mTransport: "Transport<small>Espèces</small>",
+  mVeg: "Légumes<small>CCP</small>",
+  m80: "80 DA", m50: "50 DA", m450: "450 DA",
+  whyTitle: "Pourquoi Masarifi ?",
+  why1t: "Conçu pour l'Algérie",
+  why1d: "Le dinar, le compte CCP, le « million », le Ramadan et la rentrée scolaire.",
+  why2t: "Simple et rapide",
+  why2d: "Notez une dépense en quelques secondes.",
+  why3t: "Vos données sont à vous",
+  why3d: "Enregistrées dans votre compte, exportez-les ou supprimez-les quand vous voulez.",
+  featTitle: "Tout ce qu'il faut pour gérer vos dépenses",
+  f1t: "Budget du jour", f1d: "Combien vous pouvez dépenser aujourd'hui, jusqu'au jour de paie.",
+  f2t: "Comptes", f2d: "Espèces, CCP, carte… avec des virements entre eux.",
+  f3t: "Budgets", f3d: "Un plafond mensuel par catégorie, avec une alerte à 80 % et à 100 %.",
+  f4t: "Dettes", f4d: "Ce que vous devez et ce qu'on vous doit, avec paiements partiels et rappel d'échéance.",
+  f5t: "Dawra (الدارت)", f5d: "Organisez la dawra avec la famille ou les collègues : qui a payé, et à qui le tour d'encaisser.",
+  f6t: "Abonnements", f6d: "Hebdomadaires, mensuels ou annuels, avec un rappel avant l'échéance.",
+  f7t: "Objectifs", f7d: "Épargnez pour un objectif précis et suivez votre progression.",
+  f8t: "Saisons", f8d: "Préparez le Ramadan, l'Aïd, la rentrée scolaire et les vacances d'été, avec le montant à mettre de côté chaque mois.",
+  f9t: "Rapports", f9d: "Rapport mensuel par catégorie, export PDF et Excel.",
+  f10t: "Arabe et français", f10d: "Mode sombre, et montants affichés en dinars ou en millions.",
+  howTitle: "Comment ça marche ?",
+  how1: "Créez votre compte par e-mail ou avec Google.",
+  how2: "Indiquez votre salaire et le jour où vous le recevez.",
+  how3: "Notez vos dépenses… et Masarifi vous dit chaque jour ce qu'il vous reste.",
+  installEyebrow: "4 étapes simples",
+  installTitle: "Comment installer l'application",
+  inst1: "Appuyez sur <b>« Télécharger l'application »</b> et attendez la fin du téléchargement.",
+  inst2: "Ouvrez le fichier depuis les notifications ou le dossier <b>« Téléchargements »</b>.",
+  inst3: "Si le message <b>« Installer des applis inconnues »</b> s'affiche, appuyez sur <b>« Paramètres »</b>, activez <b>« Autoriser cette source »</b>, puis revenez.",
+  inst4: "Appuyez sur <b>« Installer »</b>, puis sur <b>« Ouvrir »</b>.",
+  playProtect: "Play Protect peut afficher un avertissement, car l'application n'est pas sur le Google Play Store. C'est normal. Appuyez sur <b>« Installer quand même »</b>.",
+  shaTitle: "Empreinte du fichier (SHA-256)",
+  privacyLabel: "Confidentialité",
+  privacy: "<b>Votre vie privée d'abord :</b> chaque utilisateur ne voit que ses propres données, vous pouvez exporter une copie complète de vos données, et supprimer définitivement votre compte et toutes vos données depuis l'application.",
+  q1: "L'application est-elle gratuite ?", a1: "Oui.",
+  q2: "Pourquoi n'est-elle pas sur Google Play ?", a2: "Nous la distribuons directement depuis ce site. Téléchargez-la toujours ici, et jamais sur d'autres sites.",
+  q3: "L'installation est-elle sûre ?", a3: "Oui, si vous téléchargez le fichier depuis ce site. L'avertissement affiché pendant l'installation est normal pour toute application installée hors du store.",
+  q4: "Comment obtenir les mises à jour ?", a4: "Revenez sur cette page, téléchargez la nouvelle version et installez-la par-dessus l'ancienne. Vos données restent enregistrées dans votre compte.",
+  q5: "Fonctionne-t-elle sans Internet ?", a5: "Oui, les opérations sont enregistrées puis synchronisées dès le retour de la connexion.",
+  q6: "L'application accède-t-elle à mon compte bancaire ou CCP ?", a6: "Non, c'est vous qui saisissez les montants, et nous ne demandons aucune information bancaire.",
+  q7: "Qu'est-ce que la dawra (الدارت) ?", a7: "Une épargne collective tournante : chaque membre verse un montant fixe chaque mois, et un seul membre encaisse la totalité à chaque tour.",
+  q8: "Est-elle disponible sur iPhone ?", a8: "Pour l'instant, uniquement sur Android.",
+  ctaTitle: "Prenez le contrôle de vos dépenses dès aujourd'hui",
+  logoAlt: "Logo Masarifi",
+  copyright: "© 2026 Masarifi",
+  footerLabel: "Liens",
+  privacyLink: "Politique de confidentialité",
+  contact: "Nous contacter",
+  toTop: "Retour en haut de la page"
+};
+
+const META = {
+  ar: { title: "مصاريفي – تطبيق إدارة المصاريف في الجزائر" },
+  fr: { title: "Masarifi – Application de gestion des dépenses en Algérie",
+        desc: "Masarifi : application Android gratuite qui calcule chaque jour combien vous pouvez dépenser jusqu'au jour de paie, en dinars algériens. Comptes, budgets, dettes, dawra et saisons." }
+};
+
+const TXT = {
+  ar: {
+    versionLine: c => `الإصدار <bdi>${c.VERSION}</bdi> · <bdi>${c.FILE_SIZE}</bdi> · <bdi>${c.MIN_ANDROID}</bdi> · مجاني`,
+    version: c => `الإصدار <bdi>${c.VERSION}</bdi>`,
+    ios: "التطبيق متوفر حالياً على أندرويد فقط",
+    copy: "نسخ", copied: "تم النسخ!"
+  },
+  fr: {
+    versionLine: c => `Version <bdi>${c.VERSION}</bdi> · <bdi>${c.FILE_SIZE}</bdi> · <bdi>${c.MIN_ANDROID}</bdi> · Gratuit`,
+    version: c => `Version <bdi>${c.VERSION}</bdi>`,
+    ios: "L'application est disponible pour l'instant sur Android uniquement",
+    copy: "Copier", copied: "Copié !"
+  }
+};
+
+/* French typography: non-breaking spaces before : ; ? ! » and after « */
+Object.keys(FR).forEach(k => {
+  FR[k] = FR[k].replace(/ ([:;?!»])/g, " $1").replace(/« /g, "« ");
+});
+
+(function () {
+  const root = document.documentElement;
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  /* iPhone / iPad detection (iPadOS reports itself as a Mac with touch) */
+  const ua = navigator.userAgent || "";
+  const isIOS = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  if (isIOS) root.classList.add("is-ios");
+
+  /* Download buttons */
+  const hasApk = CONFIG.APK_URL && CONFIG.APK_URL !== "#";
+  document.querySelectorAll(".js-dl").forEach(a => {
+    if (isIOS) {
+      if (a.classList.contains("hide-ios")) return;
+      const note = document.createElement("p");
+      note.className = "ios-note";
+      note.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span class="js-ios-text"></span>';
+      a.replaceWith(note);
+      return;
+    }
+    a.href = CONFIG.APK_URL || "#";
+    if (hasApk) a.setAttribute("download", `masarifi-${CONFIG.VERSION}.apk`);
+    else a.addEventListener("click", e => { e.preventDefault(); console.warn("Masarifi: set CONFIG.APK_URL to enable the download."); });
+  });
+
+  document.querySelectorAll(".js-contact").forEach(a => a.href = "mailto:" + CONFIG.CONTACT_EMAIL);
+
+  /* SHA-256 box */
+  if (CONFIG.SHA256 && CONFIG.SHA256.trim()) {
+    document.getElementById("shaBox").hidden = false;
+    document.getElementById("shaValue").textContent = CONFIG.SHA256.trim();
+  }
+
+  /* i18n: remember the Arabic markup, swap in French when asked */
+  const AR = {};
+  document.querySelectorAll("[data-i18n]").forEach(el => { if (!(el.dataset.i18n in AR)) AR[el.dataset.i18n] = el.innerHTML; });
+  const AR_ARIA = {};
+  document.querySelectorAll("[data-i18n-aria]").forEach(el => { AR_ARIA[el.dataset.i18nAria] = el.getAttribute("aria-label"); });
+  const metaDesc = document.querySelector('meta[name="description"]');
+  META.ar.desc = metaDesc.content;
+
+  let lang = "ar";
+  function setLang(l) {
+    lang = l === "fr" ? "fr" : "ar";
+    const dict = lang === "fr" ? FR : AR;
+    const aria = lang === "fr" ? FR : AR_ARIA;
+    root.lang = lang;
+    root.dir = lang === "fr" ? "ltr" : "rtl";
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const v = dict[el.dataset.i18n];
+      if (v != null) el.innerHTML = v;
+    });
+    document.querySelectorAll("[data-i18n-aria]").forEach(el => {
+      const v = aria[el.dataset.i18nAria];
+      if (v != null) el.setAttribute("aria-label", v);
+    });
+    const t = TXT[lang];
+    document.querySelectorAll(".js-version-line").forEach(el => el.innerHTML = t.versionLine(CONFIG));
+    document.querySelectorAll(".js-version").forEach(el => el.innerHTML = t.version(CONFIG));
+    document.querySelectorAll(".js-date").forEach(el => { el.dateTime = CONFIG.RELEASE_DATE; el.textContent = CONFIG.RELEASE_DATE; });
+    document.querySelectorAll(".js-ios-text").forEach(el => el.textContent = t.ios);
+    document.getElementById("copyLbl").textContent = t.copy;
+    document.title = META[lang].title;
+    metaDesc.content = META[lang].desc;
+    document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+    store.set("masarifi-lang", lang);
+  }
+  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+  const urlLang = new URLSearchParams(location.search).get("lang");
+  setLang(urlLang || store.get("masarifi-lang") || "ar");
+
+  /* Theme: system default, manual override remembered */
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  function applyDarkClass() {
+    const t = root.getAttribute("data-theme");
+    const dark = t ? t === "dark" : mq.matches;
+    root.classList.toggle("dark", dark);
+    document.getElementById("themeBtn").setAttribute("aria-pressed", String(dark));
+  }
+  const savedTheme = store.get("masarifi-theme");
+  if (savedTheme === "dark" || savedTheme === "light") root.setAttribute("data-theme", savedTheme);
+  applyDarkClass();
+  mq.addEventListener && mq.addEventListener("change", applyDarkClass);
+  document.getElementById("themeBtn").addEventListener("click", () => {
+    const next = root.classList.contains("dark") ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    store.set("masarifi-theme", next);
+    applyDarkClass();
+  });
+
+  /* Mobile menu */
+  const menuBtn = document.getElementById("menuBtn");
+  const mobileNav = document.getElementById("mobileNav");
+  let scrollAtOpen = 0;
+  const isMenuOpen = () => mobileNav.classList.contains("open");
+  function closeMenu() { mobileNav.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); }
+  menuBtn.addEventListener("click", () => {
+    const open = !isMenuOpen();
+    mobileNav.classList.toggle("open", open);
+    menuBtn.setAttribute("aria-expanded", String(open));
+    scrollAtOpen = window.scrollY;
+  });
+  mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", closeMenu));
+  /* Close when tapping anywhere outside the menu */
+  document.addEventListener("click", e => {
+    if (isMenuOpen() && !mobileNav.contains(e.target) && !menuBtn.contains(e.target)) closeMenu();
+  });
+  /* Close when the page scrolls (small threshold ignores jitter) */
+  window.addEventListener("scroll", () => {
+    if (isMenuOpen() && Math.abs(window.scrollY - scrollAtOpen) > 10) closeMenu();
+  }, { passive: true });
+
+  /* Back-to-top button: shows after scrolling down */
+  const toTop = document.getElementById("toTop");
+  function updateToTop() {
+    const show = window.scrollY > 600;
+    toTop.classList.toggle("show", show);
+    toTop.tabIndex = show ? 0 : -1;
+  }
+  window.addEventListener("scroll", updateToTop, { passive: true });
+  updateToTop();
+  toTop.addEventListener("click", () => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    document.querySelector(".brand").focus({ preventScroll: true });
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && mobileNav.classList.contains("open")) { closeMenu(); menuBtn.focus(); } });
+
+  /* FAQ accordion (buttons are natively keyboard-friendly; arrows/Home/End move between questions) */
+  const qs = Array.from(document.querySelectorAll(".faq-q"));
+  qs.forEach((btn, i) => {
+    btn.addEventListener("click", () => {
+      const open = btn.getAttribute("aria-expanded") !== "true";
+      btn.setAttribute("aria-expanded", String(open));
+      document.getElementById(btn.getAttribute("aria-controls")).hidden = !open;
+    });
+    btn.addEventListener("keydown", e => {
+      let j = null;
+      if (e.key === "ArrowDown") j = (i + 1) % qs.length;
+      else if (e.key === "ArrowUp") j = (i - 1 + qs.length) % qs.length;
+      else if (e.key === "Home") j = 0;
+      else if (e.key === "End") j = qs.length - 1;
+      if (j !== null) { e.preventDefault(); qs[j].focus(); }
+    });
+  });
+
+  /* Copy SHA-256 */
+  document.getElementById("copyBtn").addEventListener("click", async () => {
+    const val = document.getElementById("shaValue").textContent;
+    let ok = false;
+    try { await navigator.clipboard.writeText(val); ok = true; }
+    catch (e) {
+      const ta = document.createElement("textarea");
+      ta.value = val; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand("copy"); } catch (e2) {}
+      ta.remove();
+    }
+    if (!ok) return;
+    const t = TXT[lang];
+    const lbl = document.getElementById("copyLbl");
+    lbl.textContent = t.copied;
+    document.getElementById("copyStatus").textContent = t.copied;
+    setTimeout(() => { lbl.textContent = t.copy; document.getElementById("copyStatus").textContent = ""; }, 2000);
+  });
+})();
+</script>
+</body>
+</html>

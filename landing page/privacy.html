@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سياسة الخصوصية – مصاريفي</title>
+<meta name="description" content="سياسة الخصوصية لتطبيق مصاريفي: ما البيانات التي نجمعها، وأين تُحفظ، وكيف تصدّرها أو تحذفها.">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1813" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='23' fill='%2300873d'/%3E%3Cpath d='M24 34 L64 22 a5 5 0 0 1 6 4 L72 34 Z' fill='%23ffffff' fill-opacity='.55'/%3E%3Crect x='20' y='32' width='60' height='44' rx='9' fill='%23ffffff'/%3E%3Cpath d='M58 46 h22 v16 h-22 a8 8 0 0 1 0 -16 Z' fill='%230b5d33'/%3E%3Ccircle cx='60' cy='54' r='4' fill='%23e8b23a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* Same colours as index.html */
+:root{
+  --green:#00873D; --green-deep:#0B5D33;
+  --bg:#FFFFFF; --surface:#F6F9F7; --card:#FFFFFF;
+  --border:#E5ECE8; --border-strong:#D2DCD6;
+  --text:#16211B; --muted:#5D6B63;
+  --green-text:#00733A; --green-soft:#EAF5EE;
+  --header-h:68px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1412; --surface:#151C18; --card:#18201C; --border:#25302A; --border-strong:#34413A;
+    --text:#EDF2EF; --muted:#A3B0A9; --green-text:#4FC984; --green-soft:#16281E;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1412; --surface:#151C18; --card:#18201C; --border:#25302A; --border-strong:#34413A;
+  --text:#EDF2EF; --muted:#A3B0A9; --green-text:#4FC984; --green-soft:#16281E;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Cairo","Inter",system-ui,sans-serif;font-size:17px;line-height:1.85;overflow-x:hidden}
+html[lang="fr"] body{font-family:"Inter","Cairo",system-ui,sans-serif;font-size:16px;line-height:1.7}
+svg{display:block}
+a{color:var(--green-text);text-underline-offset:4px}
+:focus-visible{outline:3px solid var(--green);outline-offset:3px;border-radius:6px}
+.icon{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.skip{position:absolute;inset-inline-start:16px;top:-60px;background:var(--green);color:#fff;padding:10px 16px;border-radius:10px;z-index:100;text-decoration:none}
+.skip:focus{top:10px}
+.container{width:100%;max-width:1120px;margin-inline:auto;padding-inline:16px}
+@media (min-width:640px){.container{padding-inline:28px}}
+
+/* Header */
+.site-header{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border)}
+.header-inner{height:var(--header-h);display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:800;font-size:1.2rem;margin-inline-end:auto}
+.brand svg{width:36px;height:36px}
+.seg{display:flex;border:1px solid var(--border);border-radius:10px;padding:2px}
+.seg button{font:inherit;font-size:.82rem;font-weight:700;border:0;background:transparent;color:var(--muted);padding:4px 10px;border-radius:7px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--green-soft);color:var(--green-text)}
+.seg button[lang="ar"]{font-family:"Cairo",sans-serif}
+.seg button[lang="fr"]{font-family:"Inter",sans-serif}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer}
+.icon-btn:hover{background:var(--surface)}
+.theme-btn .i-sun{display:none}
+html.dark .theme-btn .i-sun{display:block}
+html.dark .theme-btn .i-moon{display:none}
+@media (max-width:360px){.brand span{display:none}}
+
+/* Page */
+.page{padding-block:40px 80px}
+.layout{display:grid;gap:32px}
+@media (min-width:960px){.layout{grid-template-columns:240px minmax(0,1fr);gap:56px;align-items:start}}
+.back{display:inline-flex;align-items:center;gap:6px;font-weight:700;text-decoration:none;margin-bottom:20px}
+.back:hover{text-decoration:underline}
+html[dir="rtl"] .back .icon{transform:scaleX(-1)}
+.doc-head h1{font-size:clamp(1.8rem,5vw,2.5rem);font-weight:800;line-height:1.3;margin:0}
+html[lang="fr"] .doc-head h1{letter-spacing:-.02em}
+.updated{color:var(--muted);font-size:.92rem;margin:6px 0 0}
+.summary{background:var(--green-soft);border-radius:16px;padding:20px 22px;margin:28px 0 8px}
+.summary h2{font-size:1.05rem;margin:0 0 8px;font-weight:800}
+.summary ul{margin:0;padding-inline-start:20px}
+.summary li{margin:2px 0}
+
+/* Table of contents */
+.toc{display:none}
+@media (min-width:960px){
+  .toc{display:block;position:sticky;top:calc(var(--header-h) + 24px)}
+  .toc p{font-weight:800;margin:0 0 8px;font-size:.95rem}
+  .toc ol{list-style:none;margin:0;padding:0;border-inline-start:2px solid var(--border)}
+  .toc a{display:block;padding:5px 14px;color:var(--muted);text-decoration:none;font-size:.92rem;font-weight:600;line-height:1.5}
+  .toc a:hover{color:var(--green-text)}
+}
+
+.doc{max-width:720px}
+.doc section{scroll-margin-top:calc(var(--header-h) + 16px);padding-top:28px}
+.doc h2{font-size:1.3rem;font-weight:800;margin:0 0 10px;line-height:1.4}
+.doc h3{font-size:1.02rem;font-weight:800;margin:18px 0 4px}
+.doc p{margin:0 0 12px}
+.doc ul{margin:0 0 12px;padding-inline-start:22px}
+.doc li{margin:4px 0}
+.doc .muted{color:var(--muted)}
+.path{display:inline;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1px 8px;font-weight:700;white-space:nowrap}
+.note{border-inline-start:3px solid var(--green);background:var(--surface);padding:12px 16px;border-radius:0 10px 10px 0;margin:12px 0}
+html[dir="rtl"] .note{border-radius:10px 0 0 10px}
+bdi{unicode-bidi:isolate}
+
+.site-footer{border-top:1px solid var(--border);padding-block:28px;font-size:.92rem;color:var(--muted);text-align:center}
+.site-footer a{color:inherit;font-weight:600}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="#00873d"/><path d="M24 34 L64 22 a5 5 0 0 1 6 4 L72 34 Z" fill="#ffffff" fill-opacity=".55"/><rect x="20" y="32" width="60" height="44" rx="9" fill="#ffffff"/><path d="M58 46 h22 v16 h-22 a8 8 0 0 1 0 -16 Z" fill="#0b5d33"/><circle cx="60" cy="54" r="4" fill="#e8b23a"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5m0 0l6-6m-6 6l6 6"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#main" data-t="skip">انتقل إلى المحتوى</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg>
+      <span data-t="brand">مصاريفي</span>
+    </a>
+    <div class="seg" role="group" aria-label="اللغة" data-t-aria="langLabel">
+      <button type="button" lang="ar" data-lang="ar" aria-pressed="true">العربية</button>
+      <button type="button" lang="fr" data-lang="fr" aria-pressed="false">Français</button>
+    </div>
+    <button type="button" class="icon-btn theme-btn" id="themeBtn" aria-label="تبديل الوضع الداكن" data-t-aria="themeLabel">
+      <svg class="icon i-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+      <svg class="icon i-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main" class="page">
+  <div class="container layout">
+
+    <!-- ===================== ARABIC ===================== -->
+    <nav class="toc" lang="ar" data-lang-block="ar" aria-label="محتويات الصفحة">
+      <p>في هذه الصفحة</p>
+      <ol>
+        <li><a href="#ar-collect">البيانات التي نجمعها</a></li>
+        <li><a href="#ar-use">كيف نستخدمها</a></li>
+        <li><a href="#ar-store">أين تُحفظ بياناتك</a></li>
+        <li><a href="#ar-share">مع من نشاركها</a></li>
+        <li><a href="#ar-perm">أذونات الهاتف</a></li>
+        <li><a href="#ar-rights">حقوقك</a></li>
+        <li><a href="#ar-keep">مدة الاحتفاظ</a></li>
+        <li><a href="#ar-site">هذا الموقع</a></li>
+        <li><a href="#ar-kids">الأطفال</a></li>
+        <li><a href="#ar-changes">تغيير هذه السياسة</a></li>
+        <li><a href="#ar-contact">اتصل بنا</a></li>
+      </ol>
+    </nav>
+
+    <article class="doc" lang="ar" data-lang-block="ar">
+      <a class="back" href="index.html"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>العودة إلى الصفحة الرئيسية</a>
+      <div class="doc-head">
+        <h1>سياسة الخصوصية</h1>
+        <p class="updated">آخر تحديث: <time class="js-date"></time></p>
+      </div>
+
+      <div class="summary">
+        <h2>باختصار</h2>
+        <ul>
+          <li>نحفظ فقط ما تُدخله أنت في التطبيق، لتشغيل حسابك ومزامنته.</li>
+          <li>لا نبيع بياناتك، ولا نعرض إعلانات، ولا نتتبّعك.</li>
+          <li>لا نطلب أي معلومات بنكية، ولا نصل إلى حسابك البنكي أو CCP.</li>
+          <li>يمكنك تصدير كل بياناتك أو حذف حسابك نهائياً من داخل التطبيق.</li>
+        </ul>
+      </div>
+
+      <p>توضّح هذه الصفحة كيف يتعامل تطبيق <b>مصاريفي</b> (ويُشار إليه هنا بـ"التطبيق" أو "نحن") مع بياناتك عند استخدامه على أندرويد.</p>
+
+      <section id="ar-collect">
+        <h2>1. البيانات التي نجمعها</h2>
+        <h3>بيانات الحساب</h3>
+        <ul>
+          <li>بريدك الإلكتروني.</li>
+          <li>اسمك، إذا سجّلت الدخول بحساب Google.</li>
+          <li>كلمة المرور: يديرها Firebase Authentication بشكل مشفّر، ولا نستطيع رؤيتها.</li>
+        </ul>
+        <h3>البيانات التي تُدخلها بنفسك</h3>
+        <ul>
+          <li>راتبك ويوم استلامه.</li>
+          <li>حساباتك (نقداً، CCP، بطاقة…) وأرصدتها، والتحويلات بينها.</li>
+          <li>مصاريفك ومداخيلك وفئاتها والملاحظات التي تكتبها.</li>
+          <li>الميزانيات والاشتراكات والأهداف.</li>
+          <li>الديون والدارت، بما فيها <b>أسماء الأشخاص</b> التي تكتبها (مثل اسم من تدين له أو أعضاء الدارت). لا نستعمل هذه الأسماء إلا لعرضها لك.</li>
+          <li>إعداداتك: اللغة، المظهر، طريقة عرض المبالغ، والتذكيرات.</li>
+        </ul>
+        <h3>بيانات تقنية</h3>
+        <ul>
+          <li><b>تقارير الأعطال</b> (Firebase Crashlytics): عند حدوث خطأ في التطبيق نستلم وصف الخطأ، وطراز الهاتف، وإصدار أندرويد والتطبيق، والمعرّف الداخلي لحسابك (رقم عشوائي، وليس بريدك). لا تحتوي هذه التقارير على مبالغك أو عملياتك.</li>
+          <li><b>التحقق من التطبيق</b> (Firebase App Check): يتأكد أن الطلبات تأتي من نسخة أصلية من التطبيق، لحماية بياناتك من الاستعمال غير المشروع.</li>
+        </ul>
+        <h3>ما لا نجمعه</h3>
+        <p>لا نصل إلى موقعك، ولا جهات الاتصال، ولا الصور، ولا الرسائل القصيرة، ولا أي معلومات بنكية. لا يحتوي التطبيق على إعلانات ولا على أدوات تتبّع أو تحليل سلوك.</p>
+      </section>
+
+      <section id="ar-use">
+        <h2>2. كيف نستخدمها</h2>
+        <ul>
+          <li>لإنشاء حسابك وتسجيل دخولك.</li>
+          <li>لحفظ بياناتك ومزامنتها بين أجهزتك، وحساب المبلغ الذي يمكنك صرفه اليوم.</li>
+          <li>لعرض التذكيرات (الاشتراكات، الديون، الميزانيات).</li>
+          <li>لإصلاح الأعطال وتحسين استقرار التطبيق.</li>
+        </ul>
+        <p>لا نستعمل بياناتك للإعلان، ولا نبيعها، ولا نؤجّرها لأي جهة.</p>
+      </section>
+
+      <section id="ar-store">
+        <h2>3. أين تُحفظ بياناتك</h2>
+        <p>تُحفظ بياناتك على خوادم <b>Google Firebase</b> (Cloud Firestore وFirebase Authentication)، وقد تكون هذه الخوادم خارج الجزائر. تُنقل البيانات مشفّرة بين هاتفك والخادم، وتُخزَّن مشفّرة لدى Google.</p>
+        <p>قواعد قاعدة البيانات تسمح لكل مستخدم بقراءة بياناته فقط وتعديلها؛ لا يمكن لأي مستخدم آخر رؤيتها.</p>
+        <p>يحتفظ التطبيق أيضاً بنسخة مؤقتة على هاتفك ليعمل بدون إنترنت، ثم يزامنها عند عودة الاتصال.</p>
+      </section>
+
+      <section id="ar-share">
+        <h2>4. مع من نشاركها</h2>
+        <p>نشارك البيانات فقط مع مزوّدي الخدمة الذين يشغّلون التطبيق، وفي حدود ما يلزم:</p>
+        <ul>
+          <li><b>Google Firebase</b>: الحسابات، قاعدة البيانات، تقارير الأعطال، التحقق من التطبيق. (<a href="https://firebase.google.com/support/privacy" rel="noopener" target="_blank">خصوصية Firebase</a>)</li>
+          <li><b>تسجيل الدخول بـ Google</b>، إذا اخترته. (<a href="https://policies.google.com/privacy" rel="noopener" target="_blank">سياسة خصوصية Google</a>)</li>
+        </ul>
+        <p>قد نكشف عن بيانات إذا ألزمنا القانون الجزائري بذلك بطلب رسمي من جهة مختصة.</p>
+        <p>عندما تصدّر تقريراً (PDF أو Excel) أو نسخة احتياطية (JSON)، يُنشأ الملف على هاتفك، وأنت من يختار أين يرسله أو يحفظه.</p>
+      </section>
+
+      <section id="ar-perm">
+        <h2>5. أذونات الهاتف</h2>
+        <ul>
+          <li><b>الإشعارات</b>: لعرض التذكيرات. تُجدول التذكيرات على هاتفك نفسه، ويمكنك إيقافها من الإعدادات.</li>
+          <li><b>التشغيل عند إقلاع الهاتف</b>: لإعادة جدولة التذكيرات بعد إعادة تشغيل الهاتف فقط.</li>
+          <li><b>الإنترنت</b>: للمزامنة وتسجيل الدخول.</li>
+        </ul>
+      </section>
+
+      <section id="ar-rights">
+        <h2>6. حقوقك</h2>
+        <p>بياناتك ملكك. يمكنك في أي وقت:</p>
+        <ul>
+          <li><b>الاطلاع عليها وتعديلها</b> مباشرة من التطبيق.</li>
+          <li><b>تصدير نسخة كاملة منها</b>: <span class="path">الإعدادات ← الحساب والبيانات ← تصدير نسخة احتياطية</span> (ملف JSON).</li>
+          <li><b>حذف حسابك وكل بياناتك نهائياً</b>: <span class="path">الإعدادات ← الحساب والبيانات ← حذف حسابي نهائياً</span>.</li>
+          <li>مراسلتنا لأي طلب يخص بياناتك (العنوان في آخر الصفحة).</li>
+        </ul>
+        <p class="note">حذف الحساب يمسح كل عملياتك وحساباتك وديونك واشتراكاتك وأهدافك ودَّاراتك، ثم حسابك نفسه. لا يمكن التراجع عنه، لذلك ننصحك بتصدير نسخة احتياطية قبله.</p>
+      </section>
+
+      <section id="ar-keep">
+        <h2>7. مدة الاحتفاظ</h2>
+        <ul>
+          <li>نحتفظ ببياناتك ما دام حسابك موجوداً.</li>
+          <li>عند حذف الحساب، تُحذف بياناتك فوراً من قاعدة البيانات.</li>
+          <li>تحتفظ Google بتقارير الأعطال مدة أقصاها 90 يوماً ثم تحذفها تلقائياً.</li>
+        </ul>
+      </section>
+
+      <section id="ar-site">
+        <h2>8. هذا الموقع</h2>
+        <p>هذا الموقع لا يستعمل ملفات تعريف الارتباط (cookies) ولا أدوات تحليل الزوار. يحفظ في متصفحك اختيارك للغة والوضع الداكن فقط. تُحمَّل الخطوط من Google Fonts، ويُحمَّل ملف التطبيق من Google Drive.</p>
+      </section>
+
+      <section id="ar-kids">
+        <h2>9. الأطفال</h2>
+        <p>التطبيق موجّه للبالغين الذين يديرون مصاريفهم، ولا نجمع عمداً بيانات أطفال دون 13 سنة. إذا علمت أن طفلاً أنشأ حساباً، راسلنا لنحذفه.</p>
+      </section>
+
+      <section id="ar-changes">
+        <h2>10. تغيير هذه السياسة</h2>
+        <p>إذا غيّرنا هذه السياسة، سننشر النسخة الجديدة في هذه الصفحة ونحدّث تاريخ "آخر تحديث". إذا كان التغيير مهماً، سنُعلمك به داخل التطبيق.</p>
+      </section>
+
+      <section id="ar-contact">
+        <h2>11. اتصل بنا</h2>
+        <p>لأي سؤال عن خصوصيتك أو بياناتك، راسلنا على: <a class="js-email" href="#"></a></p>
+      </section>
+    </article>
+
+    <!-- ===================== FRENCH ===================== -->
+    <nav class="toc" lang="fr" data-lang-block="fr" aria-label="Sommaire" hidden>
+      <p>Sur cette page</p>
+      <ol>
+        <li><a href="#fr-collect">Données collectées</a></li>
+        <li><a href="#fr-use">Utilisation</a></li>
+        <li><a href="#fr-store">Stockage</a></li>
+        <li><a href="#fr-share">Partage</a></li>
+        <li><a href="#fr-perm">Autorisations</a></li>
+        <li><a href="#fr-rights">Vos droits</a></li>
+        <li><a href="#fr-keep">Durée de conservation</a></li>
+        <li><a href="#fr-site">Ce site</a></li>
+        <li><a href="#fr-kids">Enfants</a></li>
+        <li><a href="#fr-changes">Modifications</a></li>
+        <li><a href="#fr-contact">Nous contacter</a></li>
+      </ol>
+    </nav>
+
+    <article class="doc" lang="fr" data-lang-block="fr" hidden>
+      <a class="back" href="index.html"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Retour à l'accueil</a>
+      <div class="doc-head">
+        <h1>Politique de confidentialité</h1>
+        <p class="updated">Dernière mise à jour : <time class="js-date"></time></p>
+      </div>
+
+      <div class="summary">
+        <h2>En bref</h2>
+        <ul>
+          <li>Nous enregistrons uniquement ce que vous saisissez dans l'application, pour faire fonctionner et synchroniser votre compte.</li>
+          <li>Nous ne vendons pas vos données, n'affichons pas de publicité et ne vous pistons pas.</li>
+          <li>Nous ne demandons aucune information bancaire et n'accédons pas à votre compte bancaire ou CCP.</li>
+          <li>Vous pouvez exporter toutes vos données ou supprimer définitivement votre compte depuis l'application.</li>
+        </ul>
+      </div>
+
+      <p>Cette page explique comment l'application <b>Masarifi</b> (« l'application » ou « nous ») traite vos données lorsque vous l'utilisez sur Android.</p>
+
+      <section id="fr-collect">
+        <h2>1. Données collectées</h2>
+        <h3>Données du compte</h3>
+        <ul>
+          <li>Votre adresse e-mail.</li>
+          <li>Votre nom, si vous vous connectez avec Google.</li>
+          <li>Votre mot de passe : il est géré et chiffré par Firebase Authentication, nous ne pouvons pas le voir.</li>
+        </ul>
+        <h3>Données que vous saisissez</h3>
+        <ul>
+          <li>Votre salaire et votre jour de paie.</li>
+          <li>Vos comptes (espèces, CCP, carte…), leurs soldes et les virements entre eux.</li>
+          <li>Vos dépenses, vos revenus, leurs catégories et vos notes.</li>
+          <li>Vos budgets, abonnements et objectifs.</li>
+          <li>Vos dettes et dawras, y compris les <b>noms de personnes</b> que vous saisissez (créancier, membres de la dawra). Ces noms servent uniquement à vous les afficher.</li>
+          <li>Vos réglages : langue, apparence, affichage des montants et rappels.</li>
+        </ul>
+        <h3>Données techniques</h3>
+        <ul>
+          <li><b>Rapports de plantage</b> (Firebase Crashlytics) : en cas d'erreur, nous recevons la description de l'erreur, le modèle du téléphone, les versions d'Android et de l'application, et l'identifiant interne de votre compte (un code aléatoire, pas votre e-mail). Ces rapports ne contiennent ni vos montants ni vos opérations.</li>
+          <li><b>Vérification de l'application</b> (Firebase App Check) : elle confirme que les requêtes proviennent d'une version authentique de l'application, pour protéger vos données contre les abus.</li>
+        </ul>
+        <h3>Ce que nous ne collectons pas</h3>
+        <p>Nous n'accédons ni à votre position, ni à vos contacts, ni à vos photos, ni à vos SMS, ni à aucune information bancaire. L'application ne contient ni publicité, ni outil de pistage ou d'analyse comportementale.</p>
+      </section>
+
+      <section id="fr-use">
+        <h2>2. Utilisation</h2>
+        <ul>
+          <li>Créer votre compte et vous connecter.</li>
+          <li>Enregistrer et synchroniser vos données entre vos appareils, et calculer ce que vous pouvez dépenser aujourd'hui.</li>
+          <li>Afficher les rappels (abonnements, dettes, budgets).</li>
+          <li>Corriger les plantages et améliorer la stabilité de l'application.</li>
+        </ul>
+        <p>Nous n'utilisons pas vos données à des fins publicitaires, et nous ne les vendons ni ne les louons à personne.</p>
+      </section>
+
+      <section id="fr-store">
+        <h2>3. Stockage</h2>
+        <p>Vos données sont enregistrées sur les serveurs de <b>Google Firebase</b> (Cloud Firestore et Firebase Authentication), qui peuvent se trouver hors d'Algérie. Elles sont chiffrées pendant le transfert entre votre téléphone et le serveur, et chiffrées au repos chez Google.</p>
+        <p>Les règles de la base de données n'autorisent chaque utilisateur à lire et modifier que ses propres données ; aucun autre utilisateur ne peut les voir.</p>
+        <p>L'application garde aussi une copie temporaire sur votre téléphone pour fonctionner hors connexion, puis la synchronise dès le retour d'Internet.</p>
+      </section>
+
+      <section id="fr-share">
+        <h2>4. Partage</h2>
+        <p>Nous partageons des données uniquement avec les prestataires qui font fonctionner l'application, et seulement dans la mesure nécessaire :</p>
+        <ul>
+          <li><b>Google Firebase</b> : comptes, base de données, rapports de plantage, vérification de l'application. (<a href="https://firebase.google.com/support/privacy" rel="noopener" target="_blank">Confidentialité Firebase</a>)</li>
+          <li><b>Connexion avec Google</b>, si vous la choisissez. (<a href="https://policies.google.com/privacy" rel="noopener" target="_blank">Règles de confidentialité de Google</a>)</li>
+        </ul>
+        <p>Nous pouvons divulguer des données si la loi algérienne nous y oblige, sur demande officielle d'une autorité compétente.</p>
+        <p>Lorsque vous exportez un rapport (PDF ou Excel) ou une sauvegarde (JSON), le fichier est créé sur votre téléphone, et c'est vous qui choisissez où l'envoyer ou l'enregistrer.</p>
+      </section>
+
+      <section id="fr-perm">
+        <h2>5. Autorisations du téléphone</h2>
+        <ul>
+          <li><b>Notifications</b> : pour afficher les rappels. Ils sont programmés sur votre téléphone même, et vous pouvez les désactiver dans les réglages.</li>
+          <li><b>Lancement au démarrage</b> : uniquement pour reprogrammer les rappels après un redémarrage du téléphone.</li>
+          <li><b>Internet</b> : pour la synchronisation et la connexion.</li>
+        </ul>
+      </section>
+
+      <section id="fr-rights">
+        <h2>6. Vos droits</h2>
+        <p>Vos données vous appartiennent. À tout moment, vous pouvez :</p>
+        <ul>
+          <li><b>Les consulter et les modifier</b> directement dans l'application.</li>
+          <li><b>En exporter une copie complète</b> : <span class="path">Paramètres → Compte et données → Exporter une sauvegarde</span> (fichier JSON).</li>
+          <li><b>Supprimer définitivement votre compte et toutes vos données</b> : <span class="path">Paramètres → Compte et données → Supprimer mon compte</span>.</li>
+          <li>Nous écrire pour toute demande concernant vos données (adresse en bas de page).</li>
+        </ul>
+        <p class="note">La suppression du compte efface toutes vos opérations, comptes, dettes, abonnements, objectifs et dawras, puis le compte lui-même. Elle est irréversible : nous vous conseillons d'exporter une sauvegarde avant.</p>
+      </section>
+
+      <section id="fr-keep">
+        <h2>7. Durée de conservation</h2>
+        <ul>
+          <li>Nous conservons vos données tant que votre compte existe.</li>
+          <li>Quand vous supprimez votre compte, vos données sont immédiatement effacées de la base de données.</li>
+          <li>Google conserve les rapports de plantage 90 jours au maximum, puis les supprime automatiquement.</li>
+        </ul>
+      </section>
+
+      <section id="fr-site">
+        <h2>8. Ce site</h2>
+        <p>Ce site n'utilise ni cookies ni outil de mesure d'audience. Il enregistre seulement dans votre navigateur votre choix de langue et de mode sombre. Les polices sont chargées depuis Google Fonts, et le fichier de l'application depuis Google Drive.</p>
+      </section>
+
+      <section id="fr-kids">
+        <h2>9. Enfants</h2>
+        <p>L'application s'adresse aux adultes qui gèrent leurs dépenses. Nous ne collectons pas sciemment de données d'enfants de moins de 13 ans. Si vous apprenez qu'un enfant a créé un compte, écrivez-nous pour que nous le supprimions.</p>
+      </section>
+
+      <section id="fr-changes">
+        <h2>10. Modifications</h2>
+        <p>Si nous modifions cette politique, nous publierons la nouvelle version sur cette page et mettrons à jour la date de « Dernière mise à jour ». En cas de changement important, nous vous en informerons dans l'application.</p>
+      </section>
+
+      <section id="fr-contact">
+        <h2>11. Nous contacter</h2>
+        <p>Pour toute question sur votre vie privée ou vos données, écrivez-nous à : <a class="js-email" href="#"></a></p>
+      </section>
+    </article>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container"><span data-t="copyright">© 2026 مصاريفي</span> · <a href="index.html" data-t="home">الصفحة الرئيسية</a></div>
+</footer>
+
+<script>
+/* ========= Update these values ========= */
+const PRIVACY = {
+  CONTACT_EMAIL: "merabet.abdelkarim.dev@gmail.com",
+  UPDATED: "2026-10-24"
+};
+
+const UI = {
+  ar: { title: "سياسة الخصوصية – مصاريفي", skip: "انتقل إلى المحتوى", brand: "مصاريفي", langLabel: "اللغة",
+        themeLabel: "تبديل الوضع الداكن", copyright: "© 2026 مصاريفي", home: "الصفحة الرئيسية",
+        desc: "سياسة الخصوصية لتطبيق مصاريفي: ما البيانات التي نجمعها، وأين تُحفظ، وكيف تصدّرها أو تحذفها." },
+  fr: { title: "Politique de confidentialité – Masarifi", skip: "Aller au contenu", brand: "Masarifi", langLabel: "Langue",
+        themeLabel: "Activer ou désactiver le mode sombre", copyright: "© 2026 Masarifi", home: "Accueil",
+        desc: "Politique de confidentialité de Masarifi : données collectées, lieu de stockage, export et suppression." }
+};
+
+(function () {
+  const root = document.documentElement;
+  /* Same keys as index.html, so language and theme carry over between pages */
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  document.querySelectorAll(".js-email").forEach(a => {
+    a.href = "mailto:" + PRIVACY.CONTACT_EMAIL;
+    a.textContent = PRIVACY.CONTACT_EMAIL;
+    a.dir = "ltr";
+  });
+  document.querySelectorAll(".js-date").forEach(t => { t.dateTime = PRIVACY.UPDATED; t.textContent = PRIVACY.UPDATED; });
+
+  /* French typography: non-breaking space before : ; ? ! » and after « */
+  document.querySelectorAll('[data-lang-block="fr"]').forEach(block => {
+    const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = walker.nextNode())) {
+      n.nodeValue = n.nodeValue.replace(/ ([:;?!»])/g, " $1").replace(/« /g, "« ");
+    }
+  });
+
+  const metaDesc = document.querySelector('meta[name="description"]');
+  function setLang(l) {
+    const lang = l === "fr" ? "fr" : "ar";
+    const t = UI[lang];
+    root.lang = lang;
+    root.dir = lang === "fr" ? "ltr" : "rtl";
+    document.querySelectorAll("[data-lang-block]").forEach(el => { el.hidden = el.dataset.langBlock !== lang; });
+    document.querySelectorAll("[data-t]").forEach(el => { el.textContent = t[el.dataset.t]; });
+    document.querySelectorAll("[data-t-aria]").forEach(el => el.setAttribute("aria-label", t[el.dataset.tAria]));
+    document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+    document.title = t.title;
+    metaDesc.content = t.desc;
+    store.set("masarifi-lang", lang);
+  }
+  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+  setLang(new URLSearchParams(location.search).get("lang") || store.get("masarifi-lang") || "ar");
+
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  const themeBtn = document.getElementById("themeBtn");
+  function applyDarkClass() {
+    const t = root.getAttribute("data-theme");
+    const dark = t ? t === "dark" : mq.matches;
+    root.classList.toggle("dark", dark);
+    themeBtn.setAttribute("aria-pressed", String(dark));
+  }
+  const saved = store.get("masarifi-theme");
+  if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
+  applyDarkClass();
+  mq.addEventListener && mq.addEventListener("change", applyDarkClass);
+  themeBtn.addEventListener("click", () => {
+    const next = root.classList.contains("dark") ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    store.set("masarifi-theme", next);
+    applyDarkClass();
+  });
+})();
+</script>
+</body>
+</html>

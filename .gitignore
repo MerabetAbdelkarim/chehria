@@ -48,3 +48,6 @@ app.*.map.json
 /firestore-tests/node_modules/
 firestore-debug.log
 ui-debug.log
+
+# Built APKs for direct download
+/release/

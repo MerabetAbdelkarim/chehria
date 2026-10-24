@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "605004708167-brck85knie0fa1ji2fkmldlgmp7q3hjl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dz.masarifi.masarifi",
+            "certificate_hash": "a9339c03e0e25567d9168b684542d2a61fbf1b58"
+          }
+        },
+        {
           "client_id": "605004708167-rafe1aaf5hkin62jkuihms754ut336up.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
