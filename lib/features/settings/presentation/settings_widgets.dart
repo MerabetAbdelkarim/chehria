@@ -4,13 +4,10 @@ import 'package:flutter/material.dart';
 /// dividers between the rows. Every part of the settings screen uses it so the
 /// page reads as a few clear blocks.
 class SettingsSection extends StatelessWidget {
-  const SettingsSection({
-    super.key,
-    required this.title,
-    required this.children,
-  });
+  const SettingsSection({super.key, this.title, required this.children});
 
-  final String title;
+  /// Omitted when the page title already names the group.
+  final String? title;
   final List<Widget> children;
 
   @override
@@ -19,16 +16,17 @@ class SettingsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(6, 0, 6, 8),
-          child: Text(
-            title,
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w700,
+        if (title != null)
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(6, 0, 6, 8),
+            child: Text(
+              title!,
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
-        ),
         Card(
           margin: EdgeInsets.zero,
           clipBehavior: Clip.antiAlias,

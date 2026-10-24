@@ -75,9 +75,9 @@ Future<void> goBack(WidgetTester tester) async {
 const tools = [
   'الاشتراكات',
   'الميزانيات',
-  'الأهداف',
+  'أهداف الادخار',
   'الدَّارات',
-  'المواسم',
+  'التخطيط الموسمي',
   'التقارير',
 ];
 
@@ -116,13 +116,26 @@ void main() {
     );
   });
 
-  testWidgets('money tools opens the six tools', (tester) async {
+  testWidgets('money tools lists the six tools vertically, one per row', (
+    tester,
+  ) async {
     await pumpSettings(tester);
     await openHeading(tester, 'أدوات المال');
     expect(tester.takeException(), isNull);
+
+    var previousTop = -1.0;
+    final x = <double>{};
     for (final tool in tools) {
       expect(find.text(tool), findsOneWidget, reason: tool);
+      final top = topOf(tester, tool);
+      expect(top, greaterThan(previousTop), reason: '$tool below the previous');
+      previousTop = top;
+      x.add(tester.getTopRight(find.text(tool)).dx.roundToDouble());
     }
+    // Same column: every title starts at the same edge.
+    expect(x, hasLength(1));
+    // Each row explains what the tool is for.
+    expect(find.text('سقف شهري لمصاريف كل فئة'), findsOneWidget);
   });
 
   testWidgets('preferences opens rows with their current values', (

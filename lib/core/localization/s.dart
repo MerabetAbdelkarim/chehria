@@ -218,8 +218,22 @@ class S {
       _t('حدّد راتبك ويوم استلامه', 'Indiquez votre salaire et jour de paie');
   String paydayOfMonth(int day) =>
       _t('يوم $day من كل شهر', 'le $day de chaque mois');
-  String get toolGoals => _t('الأهداف', 'Objectifs');
-  String get toolSeasonal => _t('المواسم', 'Saisons');
+  String get subscriptionsHint => _t(
+    'الفواتير المتكررة وتذكير قبل موعدها',
+    'Factures récurrentes, rappel avant l’échéance',
+  );
+  String get budgetsHint =>
+      _t('سقف شهري لمصاريف كل فئة', 'Plafond mensuel par catégorie');
+  String get goalsHint =>
+      _t('ضع جانباً مبلغاً لهدف تريد تحقيقه', 'Mettez de côté pour un projet');
+  String get dartGroupsHint => _t(
+    'جمعيات الادخار الدورية مع العائلة أو الزملاء',
+    'Tontines avec la famille ou les collègues',
+  );
+  String get reportsHint => _t(
+    'ملخص كل شهر مع تصدير Excel وPDF',
+    'Bilan mensuel, export Excel et PDF',
+  );
   String get currencyDzdShort => _t('بالدينار', 'En dinars');
   String get currencyMillionsShort => _t('بالمليون', 'En millions');
   String get remindersOn => _t('مفعّلة', 'Activés');
