@@ -147,7 +147,7 @@ tool adds a 16 % inset around it.
 
 ```bash
 flutter analyze   # no issues
-flutter test      # 166 tests
+flutter test      # 167 tests
 ```
 
 CI (`.github/workflows/ci.yml`) runs format, analyze, the Flutter tests and

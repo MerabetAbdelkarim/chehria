@@ -13,12 +13,9 @@ import '../../../core/providers/ui_providers.dart';
 import '../../../core/widgets/confirm_dialog.dart';
 import 'settings_widgets.dart';
 
-/// "Account & data": JSON backup, sign out, and permanent account deletion
-/// (last, in red).
+/// JSON backup and permanent account deletion (last, in red).
 class MyDataSection extends ConsumerWidget {
-  const MyDataSection({super.key, required this.onSignOut});
-
-  final VoidCallback onSignOut;
+  const MyDataSection({super.key});
 
   Future<void> _exportBackup(BuildContext context, WidgetRef ref) async {
     final s = ref.read(sProvider);
@@ -144,19 +141,13 @@ class MyDataSection extends ConsumerWidget {
     final s = ref.watch(sProvider);
 
     return SettingsSection(
-      title: s.accountAndData,
+      title: s.myData,
       children: [
         SettingsTile(
           icon: Icons.download_rounded,
           title: s.exportBackup,
           subtitle: s.exportBackupHint,
           onTap: () => _exportBackup(context, ref),
-        ),
-        SettingsTile(
-          icon: Icons.logout_rounded,
-          title: s.signOut,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-          onTap: onSignOut,
         ),
         SettingsTile(
           icon: Icons.delete_forever_rounded,

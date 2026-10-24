@@ -199,6 +199,21 @@ class S {
   String get moneyTools => _t('أدوات المال', 'Outils');
   String get preferences => _t('التفضيلات', 'Préférences');
   String get accountAndData => _t('الحساب والبيانات', 'Compte et données');
+  String get languageAndDisplay => _t('اللغة والعرض', 'Langue et affichage');
+  String get organizeOperations =>
+      _t('تنظيم العمليات', 'Organisation des opérations');
+  String get moneyToolsHint => _t(
+    'الاشتراكات، الميزانيات، الأهداف، الدَّارات، التقارير',
+    'Abonnements, budgets, objectifs, dawras, rapports',
+  );
+  String get preferencesHint => _t(
+    'التذكيرات، اللغة، المظهر، عرض المبالغ، الفئات',
+    'Rappels, langue, apparence, montants, catégories',
+  );
+  String get accountAndDataHint => _t(
+    'النسخة الاحتياطية وحذف الحساب',
+    'Sauvegarde et suppression du compte',
+  );
   String get setUpSalary =>
       _t('حدّد راتبك ويوم استلامه', 'Indiquez votre salaire et jour de paie');
   String paydayOfMonth(int day) =>

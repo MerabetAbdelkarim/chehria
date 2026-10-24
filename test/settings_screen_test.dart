@@ -1,5 +1,6 @@
-// Renders the real settings screen (no Firebase): the four blocks appear in
-// order, choosers open, and the layout holds in French and with large text.
+// Renders the real settings screens (no Firebase): headings only on the main
+// page, each heading opens its details, and every page holds in French and
+// with large text.
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,79 +62,127 @@ Future<void> pumpSettings(
 double topOf(WidgetTester tester, String text) =>
     tester.getTopLeft(find.text(text)).dy;
 
+Future<void> openHeading(WidgetTester tester, String title) async {
+  await tester.tap(find.text(title));
+  await tester.pumpAndSettle();
+}
+
+Future<void> goBack(WidgetTester tester) async {
+  tester.state<NavigatorState>(find.byType(Navigator)).pop();
+  await tester.pumpAndSettle();
+}
+
+const tools = [
+  'الاشتراكات',
+  'الميزانيات',
+  'الأهداف',
+  'الدَّارات',
+  'المواسم',
+  'التقارير',
+];
+
 void main() {
-  testWidgets('four blocks, in order: salary, tools, preferences, account', (
+  testWidgets('main page: profile, salary, three headings, sign out last', (
     tester,
   ) async {
-    await pumpSettings(tester, size: const Size(1080, 4800));
+    await pumpSettings(tester);
     expect(tester.takeException(), isNull);
 
     expect(find.text('كريم مرابط'), findsOneWidget);
+    // The salary is shown directly, not behind a heading.
     expect(find.text('يوم 25 من كل شهر'), findsOneWidget);
 
     final salary = topOf(tester, 'راتبي');
-    final tools = topOf(tester, 'أدوات المال');
+    final toolsTop = topOf(tester, 'أدوات المال');
     final prefs = topOf(tester, 'التفضيلات');
     final account = topOf(tester, 'الحساب والبيانات');
-    expect(salary, lessThan(tools));
-    expect(tools, lessThan(prefs));
+    final signOut = topOf(tester, 'تسجيل الخروج');
+    expect(salary, lessThan(toolsTop));
+    expect(toolsTop, lessThan(prefs));
     expect(prefs, lessThan(account));
+    expect(account, lessThan(signOut));
 
-    // All six tools are in the grid.
-    for (final tool in [
-      'الاشتراكات',
-      'الميزانيات',
-      'الأهداف',
-      'الدَّارات',
-      'المواسم',
-      'التقارير',
-    ]) {
-      expect(find.text(tool), findsOneWidget, reason: tool);
+    // Headings only: no tool, preference or delete row on this page.
+    for (final tool in tools) {
+      expect(find.text(tool), findsNothing, reason: tool);
     }
+    expect(find.text('اللغة'), findsNothing);
+    expect(find.text('حذف حسابي نهائياً'), findsNothing);
 
-    // Deleting the account is the very last row; sign out sits just above.
+    // Everything fits on one phone screen, sign out included.
     expect(
-      topOf(tester, 'تسجيل الخروج'),
-      lessThan(topOf(tester, 'حذف حسابي نهائياً')),
+      tester.getBottomLeft(find.text('تسجيل الخروج')).dy,
+      lessThan(2400 / 2.625),
     );
   });
 
-  testWidgets('each preference shows its current value', (tester) async {
-    await pumpSettings(tester, size: const Size(1080, 4800));
+  testWidgets('money tools opens the six tools', (tester) async {
+    await pumpSettings(tester);
+    await openHeading(tester, 'أدوات المال');
+    expect(tester.takeException(), isNull);
+    for (final tool in tools) {
+      expect(find.text(tool), findsOneWidget, reason: tool);
+    }
+  });
+
+  testWidgets('preferences opens rows with their current values', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+    await openHeading(tester, 'التفضيلات');
+    expect(tester.takeException(), isNull);
     expect(find.text('العربية'), findsOneWidget);
     expect(find.text('حسب النظام'), findsOneWidget);
     expect(find.text('بالدينار'), findsOneWidget);
+    expect(find.text('تذكيرات الاستحقاقات'), findsOneWidget);
   });
 
-  testWidgets('tapping language opens a chooser with both languages', (
-    tester,
-  ) async {
-    await pumpSettings(tester, size: const Size(1080, 4800));
+  testWidgets('language and appearance choosers open', (tester) async {
+    await pumpSettings(tester);
+    await openHeading(tester, 'التفضيلات');
+
     await tester.tap(find.text('اللغة'));
     await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
     expect(find.text('Français'), findsOneWidget);
     expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
-  });
+    Navigator.of(tester.element(find.text('Français'))).pop();
+    await tester.pumpAndSettle();
 
-  testWidgets('tapping appearance offers system, light and dark', (
-    tester,
-  ) async {
-    await pumpSettings(tester, size: const Size(1080, 4800));
     await tester.tap(find.text('المظهر'));
     await tester.pumpAndSettle();
     expect(find.text('فاتح'), findsOneWidget);
     expect(find.text('داكن'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
-  testWidgets('French layout has no overflow', (tester) async {
-    await pumpSettings(tester, locale: 'fr', size: const Size(1080, 4800));
+  testWidgets('account & data opens backup and delete', (tester) async {
+    await pumpSettings(tester);
+    await openHeading(tester, 'الحساب والبيانات');
     expect(tester.takeException(), isNull);
-    expect(find.text('Préférences'), findsOneWidget);
+    expect(find.text('تصدير نسخة احتياطية'), findsOneWidget);
+    expect(find.text('حذف حسابي نهائياً'), findsOneWidget);
+    expect(find.text('تسجيل الخروج'), findsNothing);
   });
 
-  testWidgets('small phone with large text has no overflow', (tester) async {
-    await pumpSettings(tester, size: const Size(720, 4800), textScale: 1.3);
+  testWidgets('French works on every page', (tester) async {
+    await pumpSettings(tester, locale: 'fr');
     expect(tester.takeException(), isNull);
+    for (final heading in ['Outils', 'Préférences', 'Compte et données']) {
+      await openHeading(tester, heading);
+      expect(tester.takeException(), isNull, reason: heading);
+      await goBack(tester);
+    }
+  });
+
+  testWidgets('small phone with large text: no overflow on any page', (
+    tester,
+  ) async {
+    await pumpSettings(tester, size: const Size(720, 2400), textScale: 1.3);
+    expect(tester.takeException(), isNull);
+    for (final heading in ['أدوات المال', 'التفضيلات', 'الحساب والبيانات']) {
+      await openHeading(tester, heading);
+      expect(tester.takeException(), isNull, reason: heading);
+      await goBack(tester);
+    }
   });
 }
