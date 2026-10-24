@@ -246,13 +246,6 @@ html[lang="fr"] .feat-top .big small{font-family:"Inter",sans-serif}
 .istep p b{color:var(--green-text)}
 .info-box{display:flex;gap:12px;align-items:flex-start;margin-top:24px;background:var(--green-soft);border-radius:12px;padding:16px 20px}
 .info-box .icon{color:var(--green-text);margin-top:3px}
-.sha{margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
-.sha h3{font-size:1rem;font-weight:800;margin-bottom:10px}
-.sha-row{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
-.sha code{flex:1 1 260px;min-width:0;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:.85rem;direction:ltr;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;word-break:break-all}
-.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border-strong);padding:10px 16px;font-size:.92rem}
-.btn-ghost:hover{border-color:var(--green)}
-.btn-ghost .icon{width:18px;height:18px}
 
 /* Privacy strip: the one green band */
 .band{background:var(--green);color:#fff}
@@ -316,7 +309,6 @@ html[lang="fr"] .feat-top .big small{font-family:"Inter",sans-serif}
     <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
-    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.4-7.5 9.5-4.3-1.1-7.5-4.9-7.5-9.5V6L12 3z"/><path d="M8.8 12l2.2 2.2 4.4-4.4"/></symbol>
     <symbol id="i-today" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.8" fill="currentColor"/></symbol>
     <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><rect x="4" y="8" width="16.5" height="11.5" rx="2.5"/><path d="M20.5 12H17a2 2 0 0 0 0 4h3.5"/></symbol>
@@ -554,18 +546,6 @@ html[lang="fr"] .feat-top .big small{font-family:"Inter",sans-serif}
       <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
       <p data-i18n="playProtect">قد يُظهر Play Protect تحذيراً لأن التطبيق غير موجود على متجر Google Play. هذا طبيعي. اضغط <b>"تثبيت على أي حال"</b>.</p>
     </div>
-
-    <div class="sha" id="shaBox" hidden>
-      <h3 data-i18n="shaTitle">بصمة الملف (SHA-256)</h3>
-      <div class="sha-row">
-        <code id="shaValue"></code>
-        <button type="button" class="btn btn-ghost" id="copyBtn">
-          <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>
-          <span id="copyLbl">نسخ</span>
-        </button>
-      </div>
-      <span class="sr-only" aria-live="polite" id="copyStatus"></span>
-    </div>
   </div>
 </section>
 
@@ -655,7 +635,6 @@ const CONFIG = {
   RELEASE_DATE: "2026-10-24",
   FILE_SIZE: "62 MB",
   MIN_ANDROID: "Android 7.0+",
-  SHA256: "92102ca8add9e1dd8d927d506b0382b2dba5fc80a64729832285bbb5562e3265", // APK checksum, shown only if not empty
   CONTACT_EMAIL: "merabet.abdelkarim.dev@gmail.com" // also in privacy.html
 };
 
@@ -718,7 +697,6 @@ const FR = {
   inst3: "Si le message <b>« Installer des applis inconnues »</b> s'affiche, appuyez sur <b>« Paramètres »</b>, activez <b>« Autoriser cette source »</b>, puis revenez.",
   inst4: "Appuyez sur <b>« Installer »</b>, puis sur <b>« Ouvrir »</b>.",
   playProtect: "Play Protect peut afficher un avertissement, car l'application n'est pas sur le Google Play Store. C'est normal. Appuyez sur <b>« Installer quand même »</b>.",
-  shaTitle: "Empreinte du fichier (SHA-256)",
   privacyLabel: "Confidentialité",
   privacy: "<b>Votre vie privée d'abord :</b> chaque utilisateur ne voit que ses propres données, vous pouvez exporter une copie complète de vos données, et supprimer définitivement votre compte et toutes vos données depuis l'application.",
   q1: "L'application est-elle gratuite ?", a1: "Oui.",
@@ -749,13 +727,11 @@ const TXT = {
     versionLine: c => `الإصدار <bdi>${c.VERSION}</bdi> · <bdi>${c.FILE_SIZE}</bdi> · <bdi>${c.MIN_ANDROID}</bdi> · مجاني`,
     version: c => `الإصدار <bdi>${c.VERSION}</bdi>`,
     ios: "التطبيق متوفر حالياً على أندرويد فقط",
-    copy: "نسخ", copied: "تم النسخ!"
   },
   fr: {
     versionLine: c => `Version <bdi>${c.VERSION}</bdi> · <bdi>${c.FILE_SIZE}</bdi> · <bdi>${c.MIN_ANDROID}</bdi> · Gratuit`,
     version: c => `Version <bdi>${c.VERSION}</bdi>`,
     ios: "L'application est disponible pour l'instant sur Android uniquement",
-    copy: "Copier", copied: "Copié !"
   }
 };
 
@@ -794,12 +770,6 @@ Object.keys(FR).forEach(k => {
 
   document.querySelectorAll(".js-contact").forEach(a => a.href = "mailto:" + CONFIG.CONTACT_EMAIL);
 
-  /* SHA-256 box */
-  if (CONFIG.SHA256 && CONFIG.SHA256.trim()) {
-    document.getElementById("shaBox").hidden = false;
-    document.getElementById("shaValue").textContent = CONFIG.SHA256.trim();
-  }
-
   /* i18n: remember the Arabic markup, swap in French when asked */
   const AR = {};
   document.querySelectorAll("[data-i18n]").forEach(el => { if (!(el.dataset.i18n in AR)) AR[el.dataset.i18n] = el.innerHTML; });
@@ -828,7 +798,6 @@ Object.keys(FR).forEach(k => {
     document.querySelectorAll(".js-version").forEach(el => el.innerHTML = t.version(CONFIG));
     document.querySelectorAll(".js-date").forEach(el => { el.dateTime = CONFIG.RELEASE_DATE; el.textContent = CONFIG.RELEASE_DATE; });
     document.querySelectorAll(".js-ios-text").forEach(el => el.textContent = t.ios);
-    document.getElementById("copyLbl").textContent = t.copy;
     document.title = META[lang].title;
     metaDesc.content = META[lang].desc;
     document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
@@ -911,26 +880,6 @@ Object.keys(FR).forEach(k => {
       else if (e.key === "End") j = qs.length - 1;
       if (j !== null) { e.preventDefault(); qs[j].focus(); }
     });
-  });
-
-  /* Copy SHA-256 */
-  document.getElementById("copyBtn").addEventListener("click", async () => {
-    const val = document.getElementById("shaValue").textContent;
-    let ok = false;
-    try { await navigator.clipboard.writeText(val); ok = true; }
-    catch (e) {
-      const ta = document.createElement("textarea");
-      ta.value = val; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
-      document.body.appendChild(ta); ta.select();
-      try { ok = document.execCommand("copy"); } catch (e2) {}
-      ta.remove();
-    }
-    if (!ok) return;
-    const t = TXT[lang];
-    const lbl = document.getElementById("copyLbl");
-    lbl.textContent = t.copied;
-    document.getElementById("copyStatus").textContent = t.copied;
-    setTimeout(() => { lbl.textContent = t.copy; document.getElementById("copyStatus").textContent = ""; }, 2000);
   });
 })();
 </script>
