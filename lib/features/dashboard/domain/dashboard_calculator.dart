@@ -26,6 +26,8 @@ class DashboardData {
     required this.salaryRecordedAmount,
     required this.goalsSetAside,
     required this.dawraNet,
+    required this.spentToday,
+    required this.todayBudget,
     required this.now,
   });
 
@@ -64,6 +66,17 @@ class DashboardData {
   /// salary + extra income - expenses - unpaid subscriptions - due debts
   /// - goals set aside + dawra net.
   final int remaining;
+
+  /// Expenses recorded today (calendar day of [now]).
+  final int spentToday;
+
+  /// What today may cost, fixed for the whole day: the money available this
+  /// morning (`remaining + spentToday`) shared over the days left, today
+  /// included. Never negative.
+  final int todayBudget;
+
+  /// What can still be spent today; negative once today's budget is passed.
+  int get leftToday => todayBudget - spentToday;
 
   final int daysLeft;
 
@@ -117,7 +130,10 @@ DashboardData buildDashboard({
   var salaryRecorded = 0;
   var expenses = 0;
   var dawraNet = 0;
+  var spentToday = 0;
   final byCategory = <String, int>{};
+  bool isToday(DateTime d) =>
+      d.year == now.year && d.month == now.month && d.day == now.day;
 
   for (final txn in periodTransactions) {
     if (txn.type == TxnType.transfer) continue;
@@ -130,6 +146,7 @@ DashboardData buildDashboard({
       if (txn.source == TxnSource.salary) salaryRecorded += txn.amount;
     } else {
       expenses += txn.amount;
+      if (isToday(txn.date)) spentToday += txn.amount;
       final key = txn.categoryId ?? '';
       byCategory[key] = (byCategory[key] ?? 0) + txn.amount;
     }
@@ -171,6 +188,10 @@ DashboardData buildDashboard({
 
   final daysLeft = period.daysLeft(now);
   final dailyAllowance = daysLeft > 0 ? remaining / daysLeft : 0.0;
+  final availableThisMorning = remaining + spentToday;
+  final todayBudget = daysLeft > 0 && availableThisMorning > 0
+      ? availableThisMorning ~/ daysLeft
+      : 0;
 
   return DashboardData(
     period: period,
@@ -193,5 +214,7 @@ DashboardData buildDashboard({
     salaryRecordedAmount: salaryRecorded,
     goalsSetAside: goalsSetAside,
     dawraNet: dawraNet,
+    spentToday: spentToday,
+    todayBudget: todayBudget,
   );
 }

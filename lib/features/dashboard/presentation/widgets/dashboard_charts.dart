@@ -419,18 +419,20 @@ class ComparisonCard extends ConsumerWidget {
                           : const Color(0xFF00873D),
                     ),
                   const SizedBox(width: 6),
-                  Text(
-                    previous == 0
-                        ? s.sameAsLast
-                        : '${up ? s.expensesUp : s.expensesDown} '
-                              '${formatPercent(ratio.abs(), isAr: s.isAr)}',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: previous == 0
-                          ? theme.colorScheme.onSurfaceVariant
-                          : (up
-                                ? theme.colorScheme.error
-                                : const Color(0xFF00873D)),
+                  Flexible(
+                    child: Text(
+                      previous == 0
+                          ? s.sameAsLast
+                          : '${up ? s.expensesUp : s.expensesDown} '
+                                '${formatPercent(ratio.abs(), isAr: s.isAr)}',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: previous == 0
+                            ? theme.colorScheme.onSurfaceVariant
+                            : (up
+                                  ? theme.colorScheme.error
+                                  : const Color(0xFF00873D)),
+                      ),
                     ),
                   ),
                 ],

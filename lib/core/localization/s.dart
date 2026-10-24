@@ -218,6 +218,47 @@ class S {
   String get daysLeft => _t('يوم متبقٍ', 'jours restants');
   String get dayLeft => _t('يوم واحد', 'un jour restant');
   String get dailyAllowance => _t('المصروف اليومي', 'Dépense quotidienne');
+  String get canSpendToday =>
+      _t('تستطيع أن تصرف اليوم', 'Vous pouvez dépenser aujourd’hui');
+  String get todayBudgetUsed =>
+      _t('صرفت كل مصروف اليوم', 'Budget du jour entièrement dépensé');
+  String overspentToday(String amount) =>
+      _t('تجاوزت مصروف اليوم بـ $amount', 'Budget du jour dépassé de $amount');
+  String spentOfToday(String spent, String budget) => _t(
+    'صرفت $spent من $budget اليوم',
+    '$spent dépensés sur $budget aujourd’hui',
+  );
+  String daysToPayday(int n) {
+    if (!isAr) {
+      return n == 1 ? '1 jour avant la paie' : '$n jours avant la paie';
+    }
+    if (n == 1) return 'يوم واحد للراتب';
+    if (n == 2) return 'يومان للراتب';
+    if (n >= 3 && n <= 10) return '$n أيام للراتب';
+    return '$n يوماً للراتب';
+  }
+
+  String get beforePayday => _t('قبل الراتب', 'Avant la paie');
+  String get nothingBeforePayday => _t(
+    'لا فواتير ولا ديون مستحقة قبل الراتب',
+    'Aucune facture ni dette à régler avant la paie',
+  );
+  String get debtDue => _t('دين', 'Dette');
+  String get billDue => _t('فاتورة', 'Facture');
+  String get salaryNotRecorded => _t(
+    'لم تسجّل راتب هذه الفترة في حساباتك بعد',
+    'Le salaire de cette période n’est pas encore enregistré',
+  );
+  String budgetAlert(String category, String percent) => _t(
+    'ميزانية $category: صرفت $percent من السقف',
+    'Budget $category : $percent du plafond',
+  );
+  String oldDebtAlert(String person) => _t(
+    '$person مدين لك منذ أكثر من شهرين',
+    '$person vous doit depuis plus de deux mois',
+  );
+  String get periodSummary => _t('ملخص الفترة', 'Résumé de la période');
+  String get openReports => _t('كل التقارير', 'Tous les rapports');
   String get negativeWarning => _t(
     'تجاوزت الميزانية! قلّل مصاريفك أو انتظر الراتب.',
     'Budget dépassé ! Réduisez vos dépenses ou attendez le salaire.',

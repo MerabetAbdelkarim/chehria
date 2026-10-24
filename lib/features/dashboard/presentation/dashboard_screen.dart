@@ -20,11 +20,11 @@ import '../../transactions/presentation/transaction_form_sheet.dart';
 import '../../transactions/providers/transactions_providers.dart';
 import '../domain/dashboard_calculator.dart';
 import '../providers/dashboard_providers.dart';
-import 'widgets/dashboard_charts.dart';
+import 'widgets/before_payday_card.dart';
 import 'widgets/goals_card.dart';
-import 'widgets/net_debts_card.dart';
-import 'widgets/pay_period_card.dart';
-import 'widgets/upcoming_bills_card.dart';
+import 'widgets/home_alerts.dart';
+import 'widgets/period_summary.dart';
+import 'widgets/today_card.dart';
 
 /// The dashboard: pay period, money left, charts, debts and recent activity.
 class DashboardScreen extends ConsumerWidget {
@@ -91,24 +91,24 @@ class DashboardScreen extends ConsumerWidget {
           onRefresh: () => _refresh(ref),
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+            // Order = how often each question is asked: today's money,
+            // what must be paid before pay day, what needs attention, then
+            // history and analysis.
             children: [
-              PayPeriodCard(
+              TodayCard(data: data),
+              const SizedBox(height: 12),
+              const BeforePaydayCard(),
+              const SizedBox(height: 12),
+              HomeAlerts(
                 data: data,
                 onRecordSalary: () => _recordSalary(context, ref, data),
               ),
-              const SizedBox(height: 12),
-              IncomeExpenseCard(data: data),
-              const SizedBox(height: 12),
-              CategoryPieCard(data: data),
-              if (data.expenses > 0) const SizedBox(height: 12),
-              ComparisonCard(data: data),
-              const SizedBox(height: 12),
-              const UpcomingBillsCard(),
-              NetDebtsCard(data: data),
-              const SizedBox(height: 12),
-              const GoalsCard(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
               _RecentSection(onRefresh: () => _refresh(ref)),
+              const SizedBox(height: 12),
+              PeriodSummarySection(data: data),
+              const SizedBox(height: 12),
+              const GoalsCard(limit: 1),
             ],
           ),
         ),
@@ -197,7 +197,8 @@ class _RecentSection extends ConsumerWidget {
                         ),
                       ),
                       trailing: AmountText(
-                        txn.isTransfer ? -txn.amount : txn.amount,
+                        // Income is positive; expenses and transfers leave the account.
+                        txn.isIncome ? txn.amount : -txn.amount,
                         sign: true,
                         colorBySign: !txn.isTransfer,
                         millionsMode: millions,

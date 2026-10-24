@@ -9,9 +9,12 @@ import '../../../goals/presentation/goals_screen.dart';
 import '../../../goals/providers/goals_providers.dart';
 import '../../../settings/providers/settings_providers.dart';
 
-/// Top savings goals with progress, shown under the pay-period summary.
+/// Savings goals closest to completion, with progress.
 class GoalsCard extends ConsumerWidget {
-  const GoalsCard({super.key});
+  const GoalsCard({super.key, this.limit = 3});
+
+  /// How many goals to list.
+  final int limit;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +25,7 @@ class GoalsCard extends ConsumerWidget {
 
     if (goals.isEmpty) return const SizedBox.shrink();
 
-    final top = goals.take(3).toList();
+    final top = goals.take(limit).toList();
 
     return Card(
       child: InkWell(

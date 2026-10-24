@@ -297,4 +297,71 @@ void main() {
       expect(data.previousExpenses, 0);
     });
   });
+
+  group('today', () {
+    // now = 12 Oct 2026, pay day 1 -> 20 days left, today included.
+    final today = DateTime(2026, 10, 12, 8);
+    final earlier = DateTime(2026, 10, 5);
+
+    test("today's budget is fixed by the money available this morning", () {
+      final data = buildDashboard(
+        now: now,
+        settings: settings,
+        periodTransactions: [
+          expense(amount: 9000, date: earlier),
+          expense(amount: 1000, date: today),
+        ],
+        previousTransactions: const [],
+        debts: const [],
+      );
+
+      expect(data.spentToday, 1000);
+      // (40000 remaining + 1000 spent today) / 20 days
+      expect(data.todayBudget, 2050);
+      expect(data.leftToday, 1050);
+    });
+
+    test("spending more than today's budget leaves a negative balance", () {
+      final data = buildDashboard(
+        now: now,
+        settings: settings,
+        periodTransactions: [
+          expense(amount: 9000, date: earlier),
+          expense(amount: 3000, date: today),
+        ],
+        previousTransactions: const [],
+        debts: const [],
+      );
+
+      expect(data.todayBudget, 2050);
+      expect(data.leftToday, -950);
+    });
+
+    test("dawra contributions and transfers are not today's spending", () {
+      final data = buildDashboard(
+        now: now,
+        settings: settings,
+        periodTransactions: [
+          expense(amount: 5000, source: TxnSource.dawra, date: today),
+        ],
+        previousTransactions: const [],
+        debts: const [],
+      );
+
+      expect(data.spentToday, 0);
+    });
+
+    test('no budget once the period is overspent', () {
+      final data = buildDashboard(
+        now: now,
+        settings: settings,
+        periodTransactions: [expense(amount: 60000, date: earlier)],
+        previousTransactions: const [],
+        debts: const [],
+      );
+
+      expect(data.todayBudget, 0);
+      expect(data.leftToday, 0);
+    });
+  });
 }

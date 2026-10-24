@@ -323,7 +323,8 @@ class _DismissibleTile extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               AmountText(
-                txn.isTransfer ? -txn.amount : txn.amount,
+                // Income is positive; expenses and transfers leave the account.
+                txn.isIncome ? txn.amount : -txn.amount,
                 sign: true,
                 colorBySign: !txn.isTransfer,
                 millionsMode: millions,
