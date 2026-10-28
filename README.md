@@ -1,4 +1,4 @@
-# مصاريفي (Masarifi)
+# الشهرية (Chehria)
 
 A personal-finance app for a **salaried person in Algeria**: set your monthly
 salary and pay day, then the app tells you — every day — how much you may still

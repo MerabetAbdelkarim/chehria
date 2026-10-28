@@ -13,7 +13,7 @@ class S {
   String _t(String ar, String fr) => isAr ? ar : fr;
 
   // ---------------------------------------------------------------- generic
-  String get appName => _t('مصاريفي', 'Masarifi');
+  String get appName => _t('الشهرية', 'Chehria');
   String get save => _t('حفظ', 'Enregistrer');
   String get saveChanges => _t('حفظ التغييرات', 'Enregistrer');
   String get cancel => _t('إلغاء', 'Annuler');
@@ -245,8 +245,8 @@ class S {
   );
   String get about => _t('حول التطبيق', 'À propos');
   String get aboutText => _t(
-    'مصاريفي — تطبيق لتسيير مصاريف الموظف في الجزائر. المبالغ بالدينار الجزائري.',
-    'Masarifi — application de gestion des dépenses pour salariés en Algérie. Montants en dinars algériens.',
+    'الشهرية: مصاريف وديون بالدينار',
+    'Chehria : dépenses et dettes en dinars.',
   );
 
   // --------------------------------------------------------------- shell

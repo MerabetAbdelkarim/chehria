@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// The Masarifi logo (wallet with a gold clasp), drawn as vectors so it stays
+/// The Chehria logo (wallet with a gold clasp), drawn as vectors so it stays
 /// sharp at any size. Same geometry as `assets/brand/icon.svg` (100×100).
 class AppLogo extends StatelessWidget {
   const AppLogo({super.key, this.size = 72});
@@ -11,7 +11,7 @@ class AppLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       image: true,
-      label: 'Masarifi',
+      label: 'Chehria',
       child: SizedBox.square(
         dimension: size,
         child: const CustomPaint(painter: _AppLogoPainter()),

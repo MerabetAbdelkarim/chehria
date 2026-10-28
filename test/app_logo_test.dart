@@ -13,6 +13,6 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(tester.getSize(find.byType(AppLogo)), const Size(76, 76));
-    expect(find.bySemanticsLabel('Masarifi'), findsOneWidget);
+    expect(find.bySemanticsLabel('Chehria'), findsOneWidget);
   });
 }

@@ -1,11 +1,11 @@
 {
-    "name": "masarifi",
-    "short_name": "masarifi",
+    "name": "الشهرية",
+    "short_name": "Chehria",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "الشهرية: مصاريف وديون بالدينار",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
