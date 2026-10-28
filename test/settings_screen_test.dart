@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/core/providers/core_providers.dart';
-import 'package:masarifi/core/providers/ui_providers.dart';
-import 'package:masarifi/core/theme/app_theme.dart';
-import 'package:masarifi/features/settings/models/user_settings.dart';
-import 'package:masarifi/features/settings/presentation/settings_screen.dart';
-import 'package:masarifi/features/settings/providers/settings_providers.dart';
+import 'package:chehria/core/providers/core_providers.dart';
+import 'package:chehria/core/providers/ui_providers.dart';
+import 'package:chehria/core/theme/app_theme.dart';
+import 'package:chehria/features/settings/models/user_settings.dart';
+import 'package:chehria/features/settings/presentation/settings_screen.dart';
+import 'package:chehria/features/settings/providers/settings_providers.dart';
 
 const settings = UserSettings(
   uid: 'u1',

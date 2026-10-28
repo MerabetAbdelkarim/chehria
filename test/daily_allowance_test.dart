@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/features/goals/models/goal.dart';
-import 'package:masarifi/features/dashboard/domain/dashboard_calculator.dart';
-import 'package:masarifi/features/debts/models/debt.dart';
-import 'package:masarifi/features/settings/models/user_settings.dart';
-import 'package:masarifi/features/transactions/models/money_transaction.dart';
+import 'package:chehria/features/goals/models/goal.dart';
+import 'package:chehria/features/dashboard/domain/dashboard_calculator.dart';
+import 'package:chehria/features/debts/models/debt.dart';
+import 'package:chehria/features/settings/models/user_settings.dart';
+import 'package:chehria/features/transactions/models/money_transaction.dart';
 
 MoneyTransaction expense({
   required int amount,

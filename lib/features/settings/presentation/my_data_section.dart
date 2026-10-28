@@ -36,7 +36,7 @@ class MyDataSection extends ConsumerWidget {
               mimeType: 'application/json',
             ),
           ],
-          fileNameOverrides: ['masarifi-backup-$day.json'],
+          fileNameOverrides: ['chehria-backup-$day.json'],
           title: s.exportBackup,
         ),
       );

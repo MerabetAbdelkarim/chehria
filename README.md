@@ -1,4 +1,4 @@
-# مصاريفي (Masarifi)
+# الشهرية (Chehria)
 
 A personal-finance app for a **salaried person in Algeria**: set your monthly
 salary and pay day, then the app tells you — every day — how much you may still
@@ -79,7 +79,7 @@ firebase emulators:exec --only firestore --project demo-masarifi "npm --prefix f
   debug token it prints, then switch **enforcement** on for Firestore and
   Authentication.
 - **API key**: in Google Cloud Console → Credentials, restrict the Android key
-  to the package `dz.masarifi.masarifi` plus your SHA-1 fingerprints, and to
+  to the package `dz.chehria.app` plus your SHA-1 fingerprints, and to
   the Firebase APIs. The key is public by design: the restriction, App Check
   and the rules are what protect the data.
 
@@ -401,7 +401,7 @@ by category. The reports screen exports it two ways:
 ### Backup & account deletion
 
 Settings → **بياناتي**: export every document as one JSON file
-(`masarifi-backup-YYYY-MM-DD.json`), or delete the account permanently
+(`chehria-backup-YYYY-MM-DD.json`), or delete the account permanently
 (re-authentication, then all Firestore data in batches, then the Firebase
 Auth user), as Google Play and the App Store require.
 

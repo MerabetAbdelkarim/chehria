@@ -1,4 +1,4 @@
-package dz.masarifi.masarifi
+package dz.chehria.app
 
 import io.flutter.embedding.android.FlutterActivity
 

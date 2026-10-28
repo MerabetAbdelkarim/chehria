@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/features/subscriptions/domain/subscription_calculator.dart';
+import 'package:chehria/features/subscriptions/domain/subscription_calculator.dart';
 
 void main() {
   group('advanceDueDate', () {

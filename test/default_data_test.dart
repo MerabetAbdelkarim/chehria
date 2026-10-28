@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/core/constants/app_constants.dart';
-import 'package:masarifi/core/constants/default_data.dart';
+import 'package:chehria/core/constants/app_constants.dart';
+import 'package:chehria/core/constants/default_data.dart';
 
 void main() {
   test('every seeded category icon resolves to a constant icon', () {

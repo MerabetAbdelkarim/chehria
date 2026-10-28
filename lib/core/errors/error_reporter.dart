@@ -26,7 +26,7 @@ Future<void> initErrorReporting() async {
 
 /// Records a handled (non-fatal) error. Never throws.
 void reportError(Object error, StackTrace stack, {String? reason}) {
-  debugPrint('[Masarifi] ${reason ?? 'error'}: $error');
+  debugPrint('[Chehria] ${reason ?? 'error'}: $error');
   if (kDebugMode) debugPrintStack(stackTrace: stack, maxFrames: 8);
   if (!_crashlyticsReady) return;
   try {

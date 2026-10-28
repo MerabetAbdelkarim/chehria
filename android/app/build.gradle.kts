@@ -25,7 +25,7 @@ val keystoreProperties = Properties().apply {
 val hasReleaseKey = keystoreProperties.getProperty("storeFile") != null
 
 android {
-    namespace = "dz.masarifi.masarifi"
+    namespace = "dz.chehria.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -42,7 +42,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "dz.masarifi.masarifi"
+        applicationId = "dz.chehria.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // Firebase Auth / Firestore require at least Android 6.0 (API 23);

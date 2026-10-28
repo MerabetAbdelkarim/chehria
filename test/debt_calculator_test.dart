@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/core/domain/debt_calculator.dart';
-import 'package:masarifi/features/debts/models/debt.dart';
+import 'package:chehria/core/domain/debt_calculator.dart';
+import 'package:chehria/features/debts/models/debt.dart';
 
 void main() {
   group('debtRemaining', () {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/core/domain/pay_period.dart';
+import 'package:chehria/core/domain/pay_period.dart';
 
 void main() {
   group('PayPeriodCalculator.clampPayday', () {
