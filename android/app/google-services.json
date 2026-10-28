@@ -7,6 +7,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:605004708167:android:93b1f2836c5454d6f7b462",
+        "android_client_info": {
+          "package_name": "dz.chehria.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "605004708167-eqc43qpgb3gt3h8r6b4gb4h9jq5g1tf3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDI67FuTmfnfnWRWA0hYHz9nP6jX9R_pbE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "605004708167-eqc43qpgb3gt3h8r6b4gb4h9jq5g1tf3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:605004708167:android:c43291f535d58eadf7b462",
         "android_client_info": {
           "package_name": "dz.masarifi.masarifi"
