@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/core/localization/s.dart';
-import 'package:masarifi/features/reports/data/export_service.dart';
-import 'package:masarifi/features/reports/domain/monthly_report.dart';
-import 'package:masarifi/features/transactions/models/money_transaction.dart';
+import 'package:chehria/core/localization/s.dart';
+import 'package:chehria/features/reports/data/export_service.dart';
+import 'package:chehria/features/reports/domain/monthly_report.dart';
+import 'package:chehria/features/transactions/models/money_transaction.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 PdfFonts loadFonts() {

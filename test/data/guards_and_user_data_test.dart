@@ -4,11 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/core/constants/app_constants.dart';
-import 'package:masarifi/features/accounts/data/account_repository.dart';
-import 'package:masarifi/features/auth/data/bootstrap_repository.dart';
-import 'package:masarifi/features/categories/data/category_repository.dart';
-import 'package:masarifi/features/settings/data/user_data_repository.dart';
+import 'package:chehria/core/constants/app_constants.dart';
+import 'package:chehria/features/accounts/data/account_repository.dart';
+import 'package:chehria/features/auth/data/bootstrap_repository.dart';
+import 'package:chehria/features/categories/data/category_repository.dart';
+import 'package:chehria/features/settings/data/user_data_repository.dart';
 
 const uid = 'u1';
 
@@ -117,7 +117,7 @@ void main() {
 
     test('export contains every collection as plain JSON', () async {
       final data = await UserDataRepository(db).exportAll(uid);
-      expect(data['format'], 'masarifi-backup');
+      expect(data['format'], 'chehria-backup');
       expect(data['profile']['salary'], 45000);
       expect(data['profile']['createdAt'], '2026-01-02T00:00:00.000Z');
       expect(data['accounts'], hasLength(1));
@@ -127,6 +127,49 @@ void main() {
         expect(data.containsKey(name), isTrue, reason: name);
       }
       expect(await UserDataRepository(db).exportJson(uid), contains('"id"'));
+    });
+
+    test('restores a legacy Masarifi backup', () async {
+      final backup = <String, dynamic>{
+        'format': 'masarifi-backup',
+        'version': 1,
+        'profile': {
+          'salary': 60000,
+          'createdAt': '2026-02-01T00:00:00.000Z',
+        },
+        for (final name in UserDataRepository.collections) name: [],
+      };
+      backup['accounts'] = [
+        {
+          'id': 'restored-cash',
+          'name': 'Restored cash',
+          'balance': 250,
+          'createdAt': '2026-02-02T00:00:00.000Z',
+        },
+      ];
+      backup['transactions'] = [
+        {
+          'id': 'restored-transaction',
+          'amount': 50,
+          'date': '2026-02-03T00:00:00.000Z',
+        },
+      ];
+
+      await UserDataRepository(db).restoreAll(uid, backup);
+
+      final profile = await db.collection('users').doc(uid).get();
+      expect(profile.data()?['salary'], 60000);
+      expect(profile.data()?['createdAt'], isA<Timestamp>());
+      final accounts = await col('accounts').get();
+      expect(accounts.docs.map((doc) => doc.id), ['restored-cash']);
+      expect(accounts.docs.single.data()['createdAt'], isA<Timestamp>());
+      final transactions = await col('transactions').get();
+      expect(transactions.docs.map((doc) => doc.id), ['restored-transaction']);
+      expect(transactions.docs.single.data()['date'], isA<Timestamp>());
+      expect(
+        (await db.collection('users').doc('other').get()).exists,
+        isTrue,
+      );
     });
 
     test('deleteAll removes the user and only that user', () async {

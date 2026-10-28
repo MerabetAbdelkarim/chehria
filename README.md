@@ -401,7 +401,7 @@ by category. The reports screen exports it two ways:
 ### Backup & account deletion
 
 Settings → **بياناتي**: export every document as one JSON file
-(`masarifi-backup-YYYY-MM-DD.json`), or delete the account permanently
+(`chehria-backup-YYYY-MM-DD.json`), or delete the account permanently
 (re-authentication, then all Firestore data in batches, then the Firebase
 Auth user), as Google Play and the App Store require.
 

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/features/categories/models/category.dart';
-import 'package:masarifi/features/reports/domain/monthly_report.dart';
-import 'package:masarifi/features/transactions/models/money_transaction.dart';
+import 'package:chehria/features/categories/models/category.dart';
+import 'package:chehria/features/reports/domain/monthly_report.dart';
+import 'package:chehria/features/transactions/models/money_transaction.dart';
 
 MoneyTransaction expense(int amount, DateTime date, {String? categoryId}) =>
     MoneyTransaction(

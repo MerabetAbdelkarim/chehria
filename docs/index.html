@@ -764,7 +764,7 @@ Object.keys(FR).forEach(k => {
       return;
     }
     a.href = CONFIG.APK_URL || "#";
-    if (hasApk) a.setAttribute("download", `masarifi-${CONFIG.VERSION}.apk`);
+    if (hasApk) a.setAttribute("download", `chehria-${CONFIG.VERSION}.apk`);
     else a.addEventListener("click", e => { e.preventDefault(); console.warn("Chehria: set CONFIG.APK_URL to enable the download."); });
   });
 
@@ -801,11 +801,11 @@ Object.keys(FR).forEach(k => {
     document.title = META[lang].title;
     metaDesc.content = META[lang].desc;
     document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
-    store.set("masarifi-lang", lang);
+    store.set("chehria-lang", lang);
   }
   document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
   const urlLang = new URLSearchParams(location.search).get("lang");
-  setLang(urlLang || store.get("masarifi-lang") || "ar");
+  setLang(urlLang || store.get("chehria-lang") || "ar");
 
   /* Theme: system default, manual override remembered */
   const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -815,14 +815,14 @@ Object.keys(FR).forEach(k => {
     root.classList.toggle("dark", dark);
     document.getElementById("themeBtn").setAttribute("aria-pressed", String(dark));
   }
-  const savedTheme = store.get("masarifi-theme");
+  const savedTheme = store.get("chehria-theme");
   if (savedTheme === "dark" || savedTheme === "light") root.setAttribute("data-theme", savedTheme);
   applyDarkClass();
   mq.addEventListener && mq.addEventListener("change", applyDarkClass);
   document.getElementById("themeBtn").addEventListener("click", () => {
     const next = root.classList.contains("dark") ? "light" : "dark";
     root.setAttribute("data-theme", next);
-    store.set("masarifi-theme", next);
+    store.set("chehria-theme", next);
     applyDarkClass();
   });
 

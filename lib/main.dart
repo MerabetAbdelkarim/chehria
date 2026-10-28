@@ -26,7 +26,7 @@ Future<void> main() async {
     await _activateAppCheck();
   }
 
-  runApp(ProviderScope(child: MasarifiApp(firebaseReady: firebaseReady)));
+  runApp(ProviderScope(child: ChehriaApp(firebaseReady: firebaseReady)));
 }
 
 /// Proves to Firebase that requests come from the genuine app, so the public

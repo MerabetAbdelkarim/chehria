@@ -488,10 +488,10 @@ const UI = {
     document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
     document.title = t.title;
     metaDesc.content = t.desc;
-    store.set("masarifi-lang", lang);
+    store.set("chehria-lang", lang);
   }
   document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
-  setLang(new URLSearchParams(location.search).get("lang") || store.get("masarifi-lang") || "ar");
+  setLang(new URLSearchParams(location.search).get("lang") || store.get("chehria-lang") || "ar");
 
   const mq = window.matchMedia("(prefers-color-scheme: dark)");
   const themeBtn = document.getElementById("themeBtn");
@@ -501,14 +501,14 @@ const UI = {
     root.classList.toggle("dark", dark);
     themeBtn.setAttribute("aria-pressed", String(dark));
   }
-  const saved = store.get("masarifi-theme");
+  const saved = store.get("chehria-theme");
   if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
   applyDarkClass();
   mq.addEventListener && mq.addEventListener("change", applyDarkClass);
   themeBtn.addEventListener("click", () => {
     const next = root.classList.contains("dark") ? "light" : "dark";
     root.setAttribute("data-theme", next);
-    store.set("masarifi-theme", next);
+    store.set("chehria-theme", next);
     applyDarkClass();
   });
 })();

@@ -39,7 +39,7 @@ class NotificationsService {
 
   static final NotificationsService instance = NotificationsService._();
 
-  static const String channelId = 'masarifi_reminders';
+  static const String channelId = 'chehria_reminders';
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();

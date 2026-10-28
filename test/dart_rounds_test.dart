@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/features/dart/models/dart_group.dart';
+import 'package:chehria/features/dart/models/dart_group.dart';
 
 DartGroup makeGroup({
   int currentRound = 1,

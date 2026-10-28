@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/core/localization/s.dart';
-import 'package:masarifi/core/notifications/notifications_service.dart';
-import 'package:masarifi/features/debts/models/debt.dart';
-import 'package:masarifi/features/notifications/domain/reminder_planner.dart';
-import 'package:masarifi/features/subscriptions/domain/subscription_calculator.dart';
-import 'package:masarifi/features/subscriptions/models/subscription.dart';
+import 'package:chehria/core/localization/s.dart';
+import 'package:chehria/core/notifications/notifications_service.dart';
+import 'package:chehria/features/debts/models/debt.dart';
+import 'package:chehria/features/notifications/domain/reminder_planner.dart';
+import 'package:chehria/features/subscriptions/domain/subscription_calculator.dart';
+import 'package:chehria/features/subscriptions/models/subscription.dart';
 
 void main() {
   final s = S('ar');

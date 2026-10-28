@@ -14,16 +14,16 @@ import 'features/notifications/providers/reminders_provider.dart';
 import 'features/settings/providers/settings_providers.dart';
 
 /// Root widget: theme, locale and the auth gate.
-class MasarifiApp extends ConsumerStatefulWidget {
-  const MasarifiApp({super.key, required this.firebaseReady});
+class ChehriaApp extends ConsumerStatefulWidget {
+  const ChehriaApp({super.key, required this.firebaseReady});
 
   final bool firebaseReady;
 
   @override
-  ConsumerState<MasarifiApp> createState() => _MasarifiAppState();
+  ConsumerState<ChehriaApp> createState() => _ChehriaAppState();
 }
 
-class _MasarifiAppState extends ConsumerState<MasarifiApp> {
+class _ChehriaAppState extends ConsumerState<ChehriaApp> {
   Timer? _midnight;
   late final AppLifecycleListener _lifecycle;
 

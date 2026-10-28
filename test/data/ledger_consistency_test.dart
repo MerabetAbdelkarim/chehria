@@ -4,15 +4,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/features/dart/data/dart_repository.dart';
-import 'package:masarifi/features/dart/models/dart_group.dart';
-import 'package:masarifi/features/debts/data/debt_repository.dart';
-import 'package:masarifi/features/debts/models/debt.dart';
-import 'package:masarifi/features/subscriptions/data/subscription_repository.dart';
-import 'package:masarifi/features/subscriptions/domain/subscription_calculator.dart';
-import 'package:masarifi/features/subscriptions/models/subscription.dart';
-import 'package:masarifi/features/transactions/data/transaction_repository.dart';
-import 'package:masarifi/features/transactions/models/money_transaction.dart';
+import 'package:chehria/features/dart/data/dart_repository.dart';
+import 'package:chehria/features/dart/models/dart_group.dart';
+import 'package:chehria/features/debts/data/debt_repository.dart';
+import 'package:chehria/features/debts/models/debt.dart';
+import 'package:chehria/features/subscriptions/data/subscription_repository.dart';
+import 'package:chehria/features/subscriptions/domain/subscription_calculator.dart';
+import 'package:chehria/features/subscriptions/models/subscription.dart';
+import 'package:chehria/features/transactions/data/transaction_repository.dart';
+import 'package:chehria/features/transactions/models/money_transaction.dart';
 
 const uid = 'u1';
 

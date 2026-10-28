@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/features/seasonal/domain/algerian_events.dart';
+import 'package:chehria/features/seasonal/domain/algerian_events.dart';
 
 void main() {
   group('upcomingEvents', () {

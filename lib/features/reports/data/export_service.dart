@@ -18,7 +18,7 @@ import '../domain/monthly_report.dart';
 class ExportService {
   ExportService._();
 
-  /// Shares `masarifi-YYYY-MM.xlsx`.
+  /// Shares `chehria-YYYY-MM.xlsx`.
   static Future<void> shareExcel({
     required MonthlyReport report,
     required List<MoneyTransaction> transactions,
@@ -83,13 +83,13 @@ class ExportService {
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           ),
         ],
-        fileNameOverrides: ['masarifi-${report.monthKey}.xlsx'],
+        fileNameOverrides: ['chehria-${report.monthKey}.xlsx'],
         title: labels.title(report),
       ),
     );
   }
 
-  /// Shares `masarifi-YYYY-MM.pdf`, in Arabic (RTL, embedded Amiri font) or
+  /// Shares `chehria-YYYY-MM.pdf`, in Arabic (RTL, embedded Amiri font) or
   /// French depending on [s].
   static Future<void> sharePdf({
     required MonthlyReport report,
@@ -108,7 +108,7 @@ class ExportService {
     );
     await Printing.sharePdf(
       bytes: bytes,
-      filename: 'masarifi-${report.monthKey}.pdf',
+      filename: 'chehria-${report.monthKey}.pdf',
     );
   }
 

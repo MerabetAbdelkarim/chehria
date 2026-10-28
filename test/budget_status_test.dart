@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:masarifi/features/budgets/domain/budget_status.dart';
-import 'package:masarifi/features/budgets/models/budget.dart';
+import 'package:chehria/features/budgets/domain/budget_status.dart';
+import 'package:chehria/features/budgets/models/budget.dart';
 
 void main() {
   group('budgetLevel', () {
